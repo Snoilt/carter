@@ -1,2 +1,16 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@theme static {
+  --color-purpleish-50: hsl(235.7 77.8% 96.5%);
+  --color-purpleish-100: hsl(237.5 75% 93.7%);
+  --color-purpleish-200: hsl(236.5 73.9% 86.5%);
+  --color-purpleish-300: hsl(236.8 74.3% 80.2%);
+  --color-purpleish-400: hsl(236.5 73.9% 72.9%);
+  --color-purpleish-500: hsl(235.7 73.3% 66.3%);
+  --color-purpleish-600: hsl(234.5 71% 58%);
+  --color-purpleish-700: hsl(233.5 62.6% 46.1%);
+  --color-purpleish-800: hsl(233.3 65.6% 32%);
+  --color-purpleish-900: hsl(233.1 72.9% 18.8%);
+  --color-purpleish-950: hsl(233.9 80.3% 12%);
+}
