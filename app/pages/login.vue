@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { z } from "zod"
-import type { FormSubmitEvent } from "@nuxt/ui"
+// import type { FormSubmitEvent } from "@nuxt/ui"
 
 const schema = z.object({
 	email: z.email(),
@@ -17,22 +17,30 @@ const state = reactive<Partial<schema>>({
 
 <template>
 	<!-- <h1>Das ist die Seite zum einloggen</h1> -->
+	<div
+		class="flex min-h-[calc(100vh-var(--ui-header-height))] justify-center items-center w-full space-y-4"
+	>
 		<UForm
-            class="grid align-middle justify-center max-w-md mx-auto my-40 space-y-4"
+			class="grid align-middle justify-center max-w-md mx-auto space-y-4"
 			:state="state"
 			:schema="schema"
-			@submit="
-				(e: FormSubmitEvent<schema>) => {
-					/* handle submit */
-				}
-			"
 		>
-			<UFormGroup label="E-Mail" name="email">
-				<UInput v-model="state.email" type="email" placeholder="E-Mail Adresse" />
-			</UFormGroup>
-			<UFormGroup label="Passwort" name="password">
-				<UInput v-model="state.password" type="password" placeholder="Passwort" />
-			</UFormGroup>
-			<UButton type="submit" color="primary">Einloggen</UButton>
+			<h1 class="font-bold text-2xl">Log in with your Email</h1>
+			<UInput v-model="state.email" type="email" placeholder="E-Mail Adresse" />
+
+			<!-- <UInput v-model="state.password" type="password" placeholder="Passwort" /> -->
+
+			<UButton type="submit" color="primary">Log in</UButton>
+			<p class="text-sm">Or log in with an existing Account</p>
+			<UButton variant="outline"
+				><Icon size="20" name="uil:apple" />Log in with Apple</UButton
+			>
+			<UButton variant="outline"
+				><Icon size="20" name="uil:google" />Log in with Google</UButton
+			>
+			<UButton variant="outline"
+				><Icon size="20" name="uil:github" />Log in with Github</UButton
+			>
 		</UForm>
+	</div>
 </template>

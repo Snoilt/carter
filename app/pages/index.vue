@@ -9,6 +9,6 @@
 				<UButton class="flex-none">Let me Play!</UButton>
 			</NuxtLink>
 			<UButton variant="outline" class="flex-none">What is Carter?</UButton>
-		</div>   
+		</div>
 	</div>
 </template>
