@@ -3,7 +3,7 @@
 		<UCard class="m-auto w-full max-w-md p-6" variant="subtle">
 			<div class="grid mx-auto space-y-6">
 				<div>
-					<h1 class="text-5xl font-bold text-center">Welcome to Carter</h1>
+					<h1 class="text-3xl font-bold text-center">Welcome to Carter</h1>
 					<p class="text-center">Your Ultimate Flashcard experience</p>
 				</div>
 				<div class="flex justify-center items-center space-x-4">

@@ -17,15 +17,13 @@ const items = ref([
 <template>
 	<UContainer class="space-y-6">
 		<!-- <h1 class="m-5 text-3xl font-bold">Dashboard</h1> -->
-		<div class="mt-5 space-y-2">
+		<!-- <div class="mt-5 space-y-2">
 			<h1 class="font-bold text-xl">Hello {{ faker.internet.displayName() }}</h1>
 			<p>You have played 12 Hours and 43 minutes in the past 2 Weeks 🥳</p>
 		</div>
-		<USeparator />
+		<USeparator /> -->
+		<h1 class="mt-5 text-xl font-bold">Your Decks</h1>
 		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-			<!-- <UButton icon="lucide:plus" size="xl" block variant="outline">
-				Create new Deck
-			</UButton> -->
 			<UCard v-for="deck in decks" :key="deck.title" variant="subtle">
 				<template #header>
 					<div class="flex items-center justify-between">
