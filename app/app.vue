@@ -15,9 +15,11 @@ const items = computed<NavigationMenuItem[]>(() => [
 		active: route.path.startsWith("/register"),
 	},
 	{
-		label: "Figma",
-		to: "https://go.nuxt.com/figma-ui",
-		target: "_blank",
+		label: "Log Out",
+		onClick: () => {
+			pb.authStore.clear()
+			navigateTo("/login")
+		},
 	},
 ])
 </script>

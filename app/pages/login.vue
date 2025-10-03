@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import * as z from "zod"
-import type { FormSubmitEvent } from "@nuxt/ui"
 
 const schema = z.object({
 	email: z.email("invalid email"),
-	password: z.string().min(6, "Password should be at least 6 characters "),
+	password: z.string().min(8, "Password should be at least 8 characters "),
 })
 
 type Schema = z.output<typeof schema>
@@ -16,24 +15,27 @@ const state = reactive<Partial<Schema>>({
 
 // ------------------------------------------------------------------------------
 
-const login = async (event: FormSubmitEvent<Schema>) => {
+const login = async () => {
 	try {
 		if (typeof state.email !== "string" || typeof state.password !== "string") {
 			throw new TypeError("Invalid email or password format")
 		}
 		await pb.collection("users").authWithPassword(state.email, state.password)
-		console.log(`logged in as ${pb.authStore.record?.id ?? "unknown"}`)
+		navigateTo("/dashboard")
 
-		console.log(event.data)
-	} catch (error) {
-		console.error("Login failed:", error)
+		useToast().add({
+			title: "Login successful",
+			color: "success",
+		})
+	} catch {
+		errorToast("Login failed, please check your credentials and try again.")
 	}
 }
 </script>
 
 <template>
 	<!-- TODO: think of some nicer way to do max width -->
-	<UContainer class="max-w-75 min-h-[calc(100vh-var(--ui-header-height))] flex">
+	<UContainer class="w-85 min-h-[calc(100vh-var(--ui-header-height))] flex">
 		<UForm
 			class="grid align-middle justify-center space-y-4 m-auto"
 			:state="state"
