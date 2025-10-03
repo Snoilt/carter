@@ -16,12 +16,9 @@ const state = reactive<Partial<schema>>({
 </script>
 
 <template>
-	<!-- <h1>Das ist die Seite zum einloggen</h1> -->
-	<div
-		class="flex min-h-[calc(100vh-var(--ui-header-height))] justify-center items-center w-full space-y-4"
-	>
+	<UContainer class="min-h-[calc(100vh-var(--ui-header-height))] flex">
 		<UForm
-			class="grid align-middle justify-center max-w-md mx-auto space-y-4"
+			class="grid align-middle justify-center space-y-4 m-auto"
 			:state="state"
 			:schema="schema"
 		>
@@ -42,5 +39,5 @@ const state = reactive<Partial<schema>>({
 				><Icon size="20" name="uil:github" />Log in with Github</UButton
 			>
 		</UForm>
-	</div>
+	</UContainer>
 </template>
