@@ -2,9 +2,7 @@
 export default defineNuxtConfig({
 	compatibilityDate: "2025-07-15",
 	devtools: { enabled: true },
-	modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxthub/core", "@nuxt/icon"],
+	modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxt/icon"],
 	css: ["~/assets/css/main.css"],
-	hub: {
-		database: true,
-	},
+	ssr: false,
 })

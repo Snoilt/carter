@@ -10,25 +10,23 @@
 		"postinstall": "nuxt prepare",
 		"lint": "eslint .",
 		"preview": "nuxt preview",
-		"db:generate": "drizzle-kit generate"
+		"pb:local:typegen": "echo 'Enter pb email' && read email && echo 'enter pb password' && read password && bunx pocketbase-typegen --url http://localhost:8090 --email $email --password $password --out ./types/pb.d.ts"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.0.0",
 		"@nuxt/eslint": "^1.9.0",
 		"@nuxt/icon": "2.0.0",
 		"@nuxt/ui": "^4.0.0-alpha.2",
-		"@nuxthub/core": "0.9.0",
-		"drizzle-orm": "^0.44.5",
 		"eslint": "^9.0.0",
 		"nuxt": "^4.1.2",
 		"ogl": "^1.0.11",
+		"pocketbase": "^0.26.2",
 		"typescript": "^5.6.3",
 		"vue": "^3.5.21",
 		"vue-router": "^4.5.1",
 		"zod": "^4.1.11"
 	},
 	"devDependencies": {
-		"drizzle-kit": "^0.31.4",
 		"eslint-plugin-unicorn": "^61.0.2",
 		"prettier": "^3.6.2",
 		"wrangler": "^4.38.0"
