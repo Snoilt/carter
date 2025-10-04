@@ -1,9 +1,19 @@
 <script setup lang="ts">
-const items = ref([
-	{ label: "Edit", icon: "lucide:pencil" },
-	{ label: "Share", icon: "lucide:share-2" },
-	{ label: "Delete", icon: "lucide:trash" },
-])
+import type { DecksResponse } from "~/types/pb"
+
+const props = defineProps<{
+	deck: DecksResponse
+}>()
+
+const items = computed(() => {
+	const baseItems = [
+		{ label: "Edit", icon: "lucide:pencil", show: canEdit(props.deck) },
+		{ label: "Share", icon: "lucide:share-2", show: true },
+		{ label: "Remove", icon: "lucide:trash", show: true },
+	]
+
+	return baseItems.filter((item) => item.show !== false)
+})
 </script>
 
 <template>

@@ -1,18 +1,10 @@
 <script setup lang="ts">
 // import { faker } from "@faker-js/faker"
-import type { DecksRecord, DecksResponse } from "~/types/pb"
+import type { DecksResponse } from "~/types/pb"
 
 // const route = useRoute()
 
 const decks = await pb.collection("decks").getFullList<DecksResponse>()
-
-console.log(decks)
-
-const items = ref([
-	{ label: "Edit", icon: "lucide:pencil" },
-	{ label: "Share", icon: "lucide:share-2" },
-	{ label: "Delete", icon: "lucide:trash" },
-])
 </script>
 
 <template>
@@ -29,9 +21,7 @@ const items = ref([
 				<template #header>
 					<div class="flex items-center justify-between">
 						<h1>{{ deck.name }}</h1>
-						<UDropdownMenu :ui="{ content: 'w-40' }" :items="items">
-							<UButton variant="ghost" size="sm" icon="lucide:more-horizontal" />
-						</UDropdownMenu>
+						<DeckDropdown :deck="deck" />
 					</div>
 				</template>
 
