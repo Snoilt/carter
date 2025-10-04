@@ -16,12 +16,10 @@ const _schema = z
 
 type Schema = z.output<typeof _schema>
 
-const fillRegisterForm = (data: Partial<Schema>) => {
+export const fillRegisterForm = (data: Partial<Schema>) => {
 	data.name = faker.person.firstName() + " " + faker.person.lastName()
 	data.email = faker.internet.email()
 	data.password = faker.internet.password({ length: 8 })
 	data.passwordConfirm = data.password
 	console.log("Filled register form with:", data)
 }
-
-export default fillRegisterForm

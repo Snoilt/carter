@@ -28,7 +28,7 @@ const login = async () => {
 			color: "success",
 		})
 	} catch {
-		errorToast("Login failed, please check your credentials and try again.")
+		toastError("Login failed, please check your credentials and try again.")
 	}
 }
 </script>
@@ -80,7 +80,7 @@ const login = async () => {
 
 				<p>
 					Dont have an Account?
-					<NuxtLink to="/register" class="text-purpleish-500">Register Now</NuxtLink>
+					<NuxtLink to="/auth/register" class="text-purpleish-500">Register Now</NuxtLink>
 				</p>
 			</UForm>
 		</UCard>

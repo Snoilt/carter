@@ -3,7 +3,6 @@ import { z } from "zod"
 
 const schema = z
 	.object({
-		name: z.string(),
 		email: z.email("Invalid email"),
 		password: z.string().min(8, "Password should be at least 8 characters"),
 		passwordConfirm: z.string(),
@@ -16,7 +15,6 @@ const schema = z
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({
-	name: "",
 	email: "",
 	password: "",
 	passwordConfirm: "",
@@ -26,12 +24,12 @@ const state = reactive<Partial<Schema>>({
 
 const register = async () => {
 	try {
-		if (!state.name || !state.email || !state.password) {
-			throw new TypeError("Invalid name, email or password format")
+		if (!state.email || !state.password) {
+			toastError("Invalid email or password format")
+			throw new Error("Invalid email or password format")
 		}
 
 		await pb.collection("users").create({
-			name: state.name,
 			email: state.email,
 			password: state.password,
 			passwordConfirm: state.passwordConfirm,
@@ -45,14 +43,14 @@ const register = async () => {
 			color: "success",
 		})
 	} catch {
-		errorToast("Registration failed. Please check your information and try again.")
+		toastError("Registration failed. Please check your information and try again.")
 	}
 }
 
 // -------------------------------------------------------------------------------
 
 defineShortcuts({
-	meta_o: () => fillRegister(state),
+	meta_o: () => fillRegisterForm(state),
 })
 </script>
 
@@ -121,7 +119,7 @@ defineShortcuts({
 
 				<p>
 					Already have an Account?
-					<NuxtLink to="/login" class="text-purpleish-500">Log in</NuxtLink>
+					<NuxtLink to="/auth/login" class="text-purpleish-500">Log in</NuxtLink>
 				</p>
 			</UForm>
 		</UCard>

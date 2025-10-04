@@ -7,7 +7,7 @@
 					<p class="text-center">Your Ultimate Flashcard experience</p>
 				</div>
 				<div class="flex justify-center items-center space-x-4">
-					<NuxtLink to="/login">
+					<NuxtLink to="/auth/login">
 						<UButton class="flex-none">Let me Play!</UButton>
 					</NuxtLink>
 					<UButton variant="outline" class="flex-none">What is Carter?</UButton>

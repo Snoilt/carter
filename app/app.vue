@@ -6,19 +6,19 @@ const route = useRoute()
 const items = computed<NavigationMenuItem[]>(() => [
 	{
 		label: "Login",
-		to: "/login",
-		active: route.path.startsWith("/login"),
+		to: "/auth/login",
+		active: route.path.startsWith("/auth/login"),
 	},
 	{
 		label: "Register",
-		to: "/register",
-		active: route.path.startsWith("/register"),
+		to: "/auth/register",
+		active: route.path.startsWith("/auth/register"),
 	},
 	{
 		label: "Log Out",
 		onClick: () => {
 			pb.authStore.clear()
-			navigateTo("/login")
+			navigateTo("/auth/login")
 		},
 	},
 ])

@@ -1,9 +1,9 @@
 /**
- * This file was @generated using pocketbase-typegen
- */
+* This file was @generated using pocketbase-typegen
+*/
 
-import type PocketBase from "pocketbase"
-import type { RecordService } from "pocketbase"
+import type PocketBase from 'pocketbase'
+import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	Authorigins = "_authOrigins",
@@ -11,6 +11,8 @@ export enum Collections {
 	Mfas = "_mfas",
 	Otps = "_otps",
 	Superusers = "_superusers",
+	Cards = "cards",
+	Decks = "decks",
 	Users = "users",
 }
 
@@ -90,6 +92,27 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
+export type CardsRecord = {
+	created?: IsoDateString
+	field?: RecordIdString
+	id: string
+	question?: HTMLString
+	solution?: HTMLString
+	title?: string
+	updated?: IsoDateString
+}
+
+export type DecksRecord = {
+	admins?: RecordIdString[]
+	created?: IsoDateString
+	creator: RecordIdString
+	description?: string
+	id: string
+	name: string
+	updated?: IsoDateString
+	user?: RecordIdString[]
+}
+
 export type UsersRecord = {
 	avatar?: string
 	created?: IsoDateString
@@ -104,18 +127,14 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> &
-	BaseSystemFields<Texpand>
-export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> &
-	BaseSystemFields<Texpand>
-export type MfasResponse<Texpand = unknown> = Required<MfasRecord> &
-	BaseSystemFields<Texpand>
-export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> &
-	BaseSystemFields<Texpand>
-export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> &
-	AuthSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> &
-	AuthSystemFields<Texpand>
+export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
+export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
+export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
+export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
+export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
+export type CardsResponse<Texpand = unknown> = Required<CardsRecord> & BaseSystemFields<Texpand>
+export type DecksResponse<Texpand = unknown> = Required<DecksRecord> & BaseSystemFields<Texpand>
+export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
@@ -125,6 +144,8 @@ export type CollectionRecords = {
 	_mfas: MfasRecord
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
+	cards: CardsRecord
+	decks: DecksRecord
 	users: UsersRecord
 }
 
@@ -134,6 +155,8 @@ export type CollectionResponses = {
 	_mfas: MfasResponse
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
+	cards: CardsResponse
+	decks: DecksResponse
 	users: UsersResponse
 }
 
@@ -141,10 +164,12 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
-	collection(idOrName: "_authOrigins"): RecordService<AuthoriginsResponse>
-	collection(idOrName: "_externalAuths"): RecordService<ExternalauthsResponse>
-	collection(idOrName: "_mfas"): RecordService<MfasResponse>
-	collection(idOrName: "_otps"): RecordService<OtpsResponse>
-	collection(idOrName: "_superusers"): RecordService<SuperusersResponse>
-	collection(idOrName: "users"): RecordService<UsersResponse>
+	collection(idOrName: '_authOrigins'): RecordService<AuthoriginsResponse>
+	collection(idOrName: '_externalAuths'): RecordService<ExternalauthsResponse>
+	collection(idOrName: '_mfas'): RecordService<MfasResponse>
+	collection(idOrName: '_otps'): RecordService<OtpsResponse>
+	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
+	collection(idOrName: 'cards'): RecordService<CardsResponse>
+	collection(idOrName: 'decks'): RecordService<DecksResponse>
+	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

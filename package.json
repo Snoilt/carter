@@ -10,7 +10,7 @@
 		"postinstall": "nuxt prepare",
 		"lint": "eslint .",
 		"preview": "nuxt preview",
-		"pb:local:typegen": "echo 'Enter pb email' && read email && echo 'enter pb password' && read password && bunx pocketbase-typegen --url http://localhost:8090 --email $email --password $password --out ./types/pb.d.ts"
+		"pb:local:typegen": "echo 'Enter pb email' && read email && echo 'enter pb password' && read password && bunx pocketbase-typegen --url http://localhost:8090 --email $email --password $password --out ./app/types/pb.d.ts"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.0.0",
