@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const collections = await useUser().getCollections()
+const user = new User()
+const collections = await user.getCollections()
 </script>
 
 <template>

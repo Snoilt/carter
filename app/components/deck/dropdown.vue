@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { removeCollection } from "~/composables/database/remove-collection"
 import type { DeckcollectionsResponse } from "~/types/pb"
+
+const user = new User()
 
 const props = defineProps<{
 	collection: DeckcollectionsResponse
@@ -10,10 +13,15 @@ const items = computed(() => {
 		{
 			label: "Edit",
 			icon: "lucide:pencil",
-			show: useUser().getRole(props.collection) >= 1,
+			show: user.getRole(props.collection) >= 1,
 		},
 		{ label: "Share", icon: "lucide:share-2", show: true },
-		{ label: "Remove", icon: "lucide:trash", show: true },
+		{
+			label: "Remove",
+			icon: "lucide:trash",
+			show: true,
+			onSelect: (_event: Event) => removeCollection(props.collection),
+		},
 	]
 
 	return baseItems.filter((item) => item.show !== false)

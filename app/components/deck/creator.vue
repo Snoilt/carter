@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { AuthRecord } from "pocketbase"
 import type { DeckcollectionsRecord } from "~/types/pb"
 
-const user: AuthRecord = pb.authStore.record
+const user = new User()
 
 const collectionTitle = ref("")
 const collectionDescription = ref("")

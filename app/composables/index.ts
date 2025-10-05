@@ -1,6 +1,7 @@
 // Database stuff
 export { pb } from "./database/pb"
-export { useUser } from "./database/use-user"
+export { User } from "./database/use-user"
+export { removeCollection } from "./database/remove-collection"
 
 // Debug tools
 export { toastError } from "./debug/error-toast"

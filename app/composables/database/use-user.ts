@@ -1,12 +1,14 @@
 import type { AuthRecord } from "pocketbase"
 import type { DeckcollectionsResponse } from "~/types/pb"
 
-class User {
+export class User {
 	id: string
 	email: string
-	constructor(id: string, email: string) {
-		this.id = id
-		this.email = email
+	constructor() {
+		const user: AuthRecord = pb.authStore.record
+		if (!user) throw toastError("Cant access User record")
+		this.id = user.id
+		this.email = user.email
 	}
 
 	getRole(collection: DeckcollectionsResponse): 0 | 1 | 2 {
@@ -22,11 +24,4 @@ class User {
 	logOut() {
 		pb.authStore.clear()
 	}
-}
-
-export const useUser = (): User => {
-	const user: AuthRecord = pb.authStore.record
-	if (!user) throw new Error("No user logged in")
-
-	return new User(user.id, user.email)
 }
