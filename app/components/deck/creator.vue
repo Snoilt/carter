@@ -1,28 +1,30 @@
 <script setup lang="ts">
 import type { AuthRecord } from "pocketbase"
-import type { DecksRecord } from "~/types/pb"
+import type { DeckcollectionsRecord } from "~/types/pb"
 
 const user: AuthRecord = pb.authStore.record
 
-const deckTitle = ref("")
-const deckDescription = ref("")
-const deckEmails = ref<string[]>([])
+const collectionTitle = ref("")
+const collectionDescription = ref("")
 
-function createDeck(close: () => void) {
+//TODO: Implement sharing functionality
+const emailList = ref<string[]>([])
+
+function createCollection(close: () => void) {
 	if (!user) {
-		throw new Error("User must be logged in to create a deck")
+		throw new Error("User must be logged in to create a collection")
 	}
 
-	const newDeck: DecksRecord = {
+	const newCollection: DeckcollectionsRecord = {
 		id: "",
 		user: [user.id],
 		creator: user.id,
-		name: deckTitle.value,
-		description: deckDescription.value,
+		name: collectionTitle.value,
+		description: collectionDescription.value,
 	}
 
 	try {
-		pb.collection("decks").create(newDeck)
+		pb.collection("deckcollections").create(newCollection)
 		useToast().add({
 			title: "Deck created successfully",
 			color: "success",
@@ -36,23 +38,28 @@ function createDeck(close: () => void) {
 </script>
 
 <template>
-	<UModal title="Create a new Deck">
+	<UModal title="Create a new Collection">
 		<template #body>
 			<UForm class="space-y-4">
-				<UFormField name="title" label="Deck Title">
-					<UInput v-model="deckTitle" placeholder="Biology" size="xl" class="w-full" />
+				<UFormField name="title" label="Collection Title">
+					<UInput
+						v-model="collectionTitle"
+						placeholder="Biology"
+						size="xl"
+						class="w-full"
+					/>
 				</UFormField>
 				<UFormField name="description" label="Description (optional)">
 					<UInput
-						v-model="deckDescription"
-						placeholder="My Biology Deck"
+						v-model="collectionDescription"
+						placeholder="My Biology Collection"
 						size="xl"
 						class="w-full"
 					/>
 				</UFormField>
 				<UFormField name="emails" label="Share with Others">
 					<UInputTags
-						v-model="deckEmails"
+						v-model="emailList"
 						placeholder="Press enter to add E-Mails"
 						size="xl"
 						class="w-full"
@@ -61,7 +68,7 @@ function createDeck(close: () => void) {
 			</UForm>
 		</template>
 		<template #footer="{ close }">
-			<UButton color="primary" size="xl" class="w-full" @click="createDeck(close)"
+			<UButton color="primary" size="xl" class="w-full" @click="createCollection(close)"
 				>Create Deck</UButton
 			>
 		</template>

@@ -3,5 +3,5 @@ const route = useRoute()
 </script>
 
 <template>
-	<h1>Deck: {{ route.params.slug }}</h1>
+	<h1>Collection: {{ route.params.slug }}</h1>
 </template>
