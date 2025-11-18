@@ -23,4 +23,5 @@ logs
 .env.*
 !.env.example
 
-pocketbase
+
+pb_data

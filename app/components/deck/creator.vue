@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { DeckcollectionsRecord } from "~/types/pb"
 
+const emit = defineEmits(["created"])
+
 const user = new User()
 
 const collectionTitle = ref("")
@@ -25,14 +27,19 @@ function createCollection(close: () => void) {
 	try {
 		pb.collection("deckcollections").create(newCollection)
 		useToast().add({
-			title: "Deck created successfully",
+            title: "Deck created successfully",
 			color: "success",
 		})
 	} catch (error) {
-		toastError(`${error}`)
+        toastError(`${error}`)
 	}
-
+    
 	close()
+    emit("created")
+	console.log("Collection created, modal closed")
+	//   collectionTitle.value = ""
+	//   collectionDescription.value = ""
+	//   emailList.value = []
 }
 </script>
 
