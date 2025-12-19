@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DeckcollectionsRecord } from "~/types/pb"
+import type { DeckcollectionsRecord, DeckcollectionsResponse } from "~/types/pb"
 
 const emit = defineEmits(["created"])
 
@@ -7,6 +7,10 @@ const user = new User()
 
 const collectionTitle = ref("")
 const collectionDescription = ref("")
+
+const props = defineProps<{
+	deckCollection?: DeckcollectionsResponse
+}>()
 
 //TODO: Implement sharing functionality
 const emailList = ref<string[]>([])
@@ -16,6 +20,8 @@ function createCollection(close: () => void) {
 		throw new Error("User must be logged in to create a collection")
 	}
 
+	
+
 	const newCollection: DeckcollectionsRecord = {
 		id: "",
 		user: [user.id],
@@ -24,6 +30,10 @@ function createCollection(close: () => void) {
 		description: collectionDescription.value,
 	}
 
+
+	// if einbauen das hier wenn keine da ist beziehungsweise wenn create gedrückt wird der 
+	// hier stehende befehl ausgeführt wird und wenn edit einen neuen erstellen der das schon vorhandene dann bearebbeitet wird, 
+	// edit soll ausgeführt werden wenn deckcollection an komponente übergeben wird
 	try {
 		pb.collection("deckcollections").create(newCollection)
 		useToast().add({
@@ -44,6 +54,7 @@ function createCollection(close: () => void) {
 </script>
 
 <template>
+	<!-- hier wenn edit anderer text also if  und dann block als edit kopieren -->
 	<UModal title="Create a new Collection">
 		<template #body>
 			<UForm class="space-y-4">

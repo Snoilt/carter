@@ -4,6 +4,7 @@ import type { DeckcollectionsResponse } from "~/types/pb"
 const collections = ref<DeckcollectionsResponse[]>([])
 const loading = ref(false)
 
+
 const fetchCollections = async () => {
 	loading.value = true
 	try {
