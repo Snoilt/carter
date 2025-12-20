@@ -1,10 +1,10 @@
-/// <reference path="../pb_data/types.d.ts" />
+import "../pb_data/types.d.ts"
 
-onRecordAfterUpdateSuccess((e) => {
-	if (e.record?.get("user").length == 0) {
-		e.app.delete(e.record)
+onRecordAfterUpdateSuccess((error) => {
+	if (error.record?.get("user").length == 0) {
+		error.app.delete(error.record)
 	}
 
-    console.log($app.subscriptionsBroker().totalClients())
-    e.next()
+	console.log($app.subscriptionsBroker().totalClients())
+	error.next()
 })

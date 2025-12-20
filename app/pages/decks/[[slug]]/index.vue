@@ -1,7 +1,20 @@
 <script setup lang="ts">
+import type { DeckcollectionsRecord } from "~/types/pb"
+
 const route = useRoute()
+const currentCollection = ref<DeckcollectionsRecord>()
+
+onMounted(async () => {
+	currentCollection.value = await pb
+		.collection("deckcollections")
+		.getOne(route.params.slug as string, {
+			expand: "user.name",
+		})
+})
 </script>
 
 <template>
-	<h1>Collection: {{ route.params.slug }}</h1>
+	<UContainer>
+		<DeckUsers v-if="currentCollection" :collection="currentCollection" />
+	</UContainer>
 </template>

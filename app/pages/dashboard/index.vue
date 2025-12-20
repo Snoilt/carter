@@ -70,7 +70,9 @@ onMounted(() => {
 				</div>
 
 				<template #footer>
-					<UButton size="xl" block variant="outline">Join</UButton>
+					<UButton size="xl" block variant="outline"
+						><NuxtLink :to="`/decks/${collection.id}`">Join</NuxtLink></UButton
+					>
 				</template>
 			</UCard>
 		</div>

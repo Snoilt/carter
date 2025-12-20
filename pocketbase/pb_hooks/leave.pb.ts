@@ -1,11 +1,11 @@
-/// <reference path="../pb_data/types.d.ts" />
+import "../pb_data/types.d.ts"
 
-routerAdd("GET", "/api/room/leave/{id}", (e) => {
-	if (!e.request) return e.json(400, { message: "Invalid request" })
-	const collectionId = e.request.pathValue("id")
-	if (!e.auth) return e.json(401, { message: "Unauthorized" })
+routerAdd("GET", "/api/room/leave/{id}", (event_) => {
+	if (!event_.request) return event_.json(400, { message: "Invalid request" })
+	const collectionId = event_.request.pathValue("id")
+	if (!event_.auth) return event_.json(401, { message: "Unauthorized" })
 
-	const auth = e.auth
+	const auth = event_.auth
 	const deckcollection = $app.findRecordById("deckcollections", collectionId)
 
 	const adminArray = deckcollection.get("admins")
@@ -17,10 +17,9 @@ routerAdd("GET", "/api/room/leave/{id}", (e) => {
 		deckcollection.set("user-", [auth.id])
 	}
 
-
-    console.log($app.subscriptionsBroker().totalClients())
+	console.log($app.subscriptionsBroker().totalClients())
 
 	$app.save(deckcollection)
 
-	return e.json(200, { message: `Leave collection ${collectionId}` })
+	return event_.json(200, { message: `Leave collection ${collectionId}` })
 })
