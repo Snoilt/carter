@@ -9,7 +9,7 @@ const props = defineProps<{
     collection: DeckcollectionsResponse
 }>()
 
-
+const isEditOpen = ref(false)
 
 const items = computed(() => {
     return [
@@ -19,8 +19,7 @@ const items = computed(() => {
             show: user.getRole(props.collection) >= 1,
             // JETZT GEHT DAS: Einfach die Funktion aufrufen!
             onSelect: () => { 
-                openEdit(props.collection) 
-				emit("action")
+                isEditOpen.value = true
             }
         },
         { label: "Share", icon: "lucide:share-2", show: true },
