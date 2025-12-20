@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DeckcollectionsRecord } from "~/types/pb"
+import type { RoomsRecord } from "~/types/pb"
 
 const emit = defineEmits(["created"])
 
@@ -16,7 +16,7 @@ function createCollection(close: () => void) {
 		throw new Error("User must be logged in to create a collection")
 	}
 
-	const newCollection: DeckcollectionsRecord = {
+	const newCollection: RoomsRecord = {
 		id: "",
 		user: [user.id],
 		creator: user.id,
@@ -25,17 +25,17 @@ function createCollection(close: () => void) {
 	}
 
 	try {
-		pb.collection("deckcollections").create(newCollection)
+		pb.collection("rooms").create(newCollection)
 		useToast().add({
-            title: "Deck created successfully",
+			title: "Deck created successfully",
 			color: "success",
 		})
 	} catch (error) {
-        toastError(`${error}`)
+		toastError(`${error}`)
 	}
-    
+
 	close()
-    emit("created")
+	emit("created")
 	console.log("Collection created, modal closed")
 	//   collectionTitle.value = ""
 	//   collectionDescription.value = ""

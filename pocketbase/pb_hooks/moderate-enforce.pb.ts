@@ -18,4 +18,4 @@ onRecordAfterUpdateSuccess((event_) => {
 			`Tried to set ${userArray[0]} as an admin on collection: ${deckCollection?.id}`,
 		)
 	}
-}, "deckcollections")
+}, "rooms")

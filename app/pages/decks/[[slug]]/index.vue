@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { DeckcollectionsRecord } from "~/types/pb"
+import type { RoomsRecord } from "~/types/pb"
 
 const route = useRoute()
-const currentCollection = ref<DeckcollectionsRecord>()
+const currentCollection = ref<RoomsRecord>()
 
 onMounted(async () => {
 	currentCollection.value = await pb
-		.collection("deckcollections")
+		.collection("rooms")
 		.getOne(route.params.slug as string, {
 			expand: "user.name",
 		})

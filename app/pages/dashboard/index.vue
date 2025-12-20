@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DeckcollectionsResponse } from "~/types/pb"
+import type { RoomsResponse } from "~/types/pb"
 
-const collections = ref<DeckcollectionsResponse[]>([])
+const collections = ref<RoomsResponse[]>([])
 const loading = ref(false)
 
 const fetchCollections = async () => {
@@ -12,12 +12,10 @@ const fetchCollections = async () => {
 			throw new Error("User must be logged in to view collections")
 		}
 
-		const result = await pb
-			.collection("deckcollections")
-			.getFullList<DeckcollectionsResponse>(undefined, {
-				filter: `user ~ "${user.id}"`,
-				sort: "-created",
-			})
+		const result = await pb.collection("rooms").getFullList<RoomsResponse>(undefined, {
+			filter: `user ~ "${user.id}"`,
+			sort: "-created",
+		})
 		console.log(collections)
 		collections.value = result
 		console.log("Collections fetched:", collections.value)
