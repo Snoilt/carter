@@ -2,7 +2,7 @@
 import { removeCollection } from "~/composables/database/remove-collection"
 import type { DeckcollectionsResponse } from "~/types/pb"
 
-const emit = defineEmits(["action"])
+const emit = defineEmits(["action"]) 
 const user = new User()
 
 const props = defineProps<{
@@ -17,9 +17,10 @@ const items = computed(() => {
             label: "Edit",
             icon: "lucide:pencil",
             show: user.getRole(props.collection) >= 1,
-            // JETZT GEHT DAS: Einfach die Funktion aufrufen!
+            // Hier nutzen wir wieder click, das ist bei Nuxt UI Standard
             onSelect: () => { 
                 isEditOpen.value = true
+                emit("action")
             }
         },
         { label: "Share", icon: "lucide:share-2", show: true },
@@ -27,8 +28,8 @@ const items = computed(() => {
             label: "Remove",
             icon: "lucide:trash",
             show: true,
-            onSelect: () => {
-                removeCollection(props.collection)
+            onSelect: async () => {
+                await removeCollection(props.collection)
                 emit("action")
             },
         },
@@ -37,12 +38,15 @@ const items = computed(() => {
 </script>
 
 <template>
-    <UDropdownMenu :ui="{ content: 'w-40' }" :items="items">
-        <DeckCreator :deck-collection="props.collection">
-				<UButton variant="outline" icon="lucide:pencil" size="xl" class="justify-center"
-					>Edit</UButton
-				>
-			</DeckCreator>
-        <UButton variant="ghost" size="sm" icon="lucide:more-horizontal" />
-    </UDropdownMenu>
+    <div class="flex items-center">
+        <DeckCreator 
+            v-model="isEditOpen" 
+            :deck-collection="props.collection" 
+            @created="emit('action')" 
+        />
+
+        <UDropdownMenu :ui="{ content: 'w-40' }" :items="items">
+            <UButton variant="ghost" size="sm" icon="lucide:more-horizontal" />
+        </UDropdownMenu>
+    </div>
 </template>

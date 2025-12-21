@@ -1,70 +1,73 @@
 <script setup lang="ts">
 import type { DeckcollectionsRecord, DeckcollectionsResponse } from "~/types/pb"
 
-const emit = defineEmits(["created"])
+const emit = defineEmits(["created", "update:modelValue"]) // Wichtig für v-model
+
+const props = defineProps<{
+    deckCollection?: DeckcollectionsResponse,
+    modelValue?: boolean // Das ist der Standard-Name für v-model
+}>()
+
 const user = new User()
 
-// Deine Props
-const props = defineProps<{
-    deckCollection?: DeckcollectionsResponse
-}>()
+// Interne Steuerung des Modals
+// Wir starten mit dem Wert, der von außen kommt, oder false
+const isOpen = ref(props.modelValue || false)
 
 const collectionTitle = ref("")
 const collectionDescription = ref("")
 const emailList = ref<string[]>([])
 
-// --- NEU: HIER WIRD GEPRÜFT, OB WIR EDITIEREN ---
-// Dieser "Watch" sorgt dafür, dass die Felder ausgefüllt sind, wenn eine Collection übergeben wird
+// 1. WATCHER: Wenn sich die Variable draußen (im Dropdown) ändert, ändern wir sie auch hier drinnen
+watch(() => props.modelValue, (value) => {
+    isOpen.value = value || false
+})
+
+// 2. WATCHER: Wenn wir das Fenster hier drinnen schließen, sagen wir dem Dropdown Bescheid
+watch(isOpen, (value) => {
+    emit("update:modelValue", value)
+})
+
+// Daten füllen beim Öffnen/Ändern der Collection
 watch(() => props.deckCollection, (newValue) => {
     if (newValue) {
-        // Wir sind im Edit-Modus: Werte übernehmen
         collectionTitle.value = newValue.name
         collectionDescription.value = newValue.description
-        // Falls du E-Mails hast, müsstest du sie hier auch laden
     } else {
-        // Wir sind im Create-Modus: Felder leeren
         collectionTitle.value = ""
         collectionDescription.value = ""
         emailList.value = []
     }
 }, { immediate: true })
-// ------------------------------------------------
 
-
-async function createCollection(close: () => void) {
-    if (!user) {
-        throw new Error("User must be logged in")
-    }
+async function createCollection(closeCallback?: () => void) {
+    if (!user) throw new Error("User must be logged in")
 
     const newCollection: DeckcollectionsRecord = {
-        id: "",
-        user: [user.id],
-        creator: user.id,
-        name: collectionTitle.value,
-        description: collectionDescription.value,
+        id: "", user: [user.id], creator: user.id,
+        name: collectionTitle.value, description: collectionDescription.value,
     }
 
     try {
-        // DEINE IF-LOGIK VON VORHIN
         if (props.deckCollection) {
-            // Update
             await pb.collection("deckcollections").update(props.deckCollection.id, {
-                name: collectionTitle.value,
-                description: collectionDescription.value,
+                name: collectionTitle.value, description: collectionDescription.value,
             })
             useToast().add({ title: "Deck updated", color: "success" })
         } else {
-            // Create
             await pb.collection("deckcollections").create(newCollection)
-            useToast().add({ title: "Deck created successfully", color: "success" })
+            useToast().add({ title: "Deck created", color: "success" })
         }
+
+        emit("created")
+        
+        // Modal schließen
+        if (closeCallback) closeCallback()
+        isOpen.value = false // Setzt auch das v-model im Parent auf false
+
     } catch (error) {
-        toastError(`${error}`)
+        console.error(error)
     }
-    
-    close()
-    emit("created")
-    console.log("Action done, modal closed")
 }
 </script>
 
