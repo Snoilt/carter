@@ -9,7 +9,8 @@ const props = defineProps<{
     collection: DeckcollectionsResponse
 }>()
 
-const isEditOpen = ref(false)
+// 1. Wir erstellen eine Referenz ("Griff"), um den Creator anzufassen
+const open = ref(false)
 
 const items = computed(() => {
     return [
@@ -17,9 +18,10 @@ const items = computed(() => {
             label: "Edit",
             icon: "lucide:pencil",
             show: user.getRole(props.collection) >= 1,
-            // Hier nutzen wir wieder click, das ist bei Nuxt UI Standard
+            // 2. JETZT IST ES EIN BEFEHL (wie bei Remove)
+            // Wir sagen direkt: "Creator, öffne dich!"
             onSelect: () => { 
-                isEditOpen.value = true
+                open.value = true
                 emit("action")
             }
         },
@@ -36,12 +38,11 @@ const items = computed(() => {
     ]
 })
 </script>
-
 <template>
     <div class="flex items-center">
         <DeckCreator 
-            v-model="isEditOpen" 
-            :deck-collection="props.collection" 
+            v-model:open="open" 
+            :deck-collection="props.collection"
             @created="emit('action')" 
         />
 

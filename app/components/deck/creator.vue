@@ -12,7 +12,18 @@ const user = new User()
 
 // Interne Steuerung des Modals
 // Wir starten mit dem Wert, der von außen kommt, oder false
-const isOpen = ref(props.modelValue || false)
+// ... existierender Code ...
+const isOpen = ref(props.modelValue || false) // oder ref(false) je nach Version
+
+// --- NEU EINFÜGEN ---
+function open() {
+    isOpen.value = true
+}
+defineExpose({ open })
+// --------------------
+
+// ... Rest des Codes ...
+
 
 const collectionTitle = ref("")
 const collectionDescription = ref("")
@@ -50,6 +61,8 @@ async function createCollection(closeCallback?: () => void) {
 
     try {
         if (props.deckCollection) {
+console.log("Props deckCollection:", props.deckCollection.id)
+
             await pb.collection("deckcollections").update(props.deckCollection.id, {
                 name: collectionTitle.value, description: collectionDescription.value,
             })
@@ -57,10 +70,12 @@ async function createCollection(closeCallback?: () => void) {
         } else {
             await pb.collection("deckcollections").create(newCollection)
             useToast().add({ title: "Deck created", color: "success" })
+            
         }
 
         emit("created")
         
+        collectionTitle.value = ""
         // Modal schließen
         if (closeCallback) closeCallback()
         isOpen.value = false // Setzt auch das v-model im Parent auf false
@@ -68,6 +83,7 @@ async function createCollection(closeCallback?: () => void) {
     } catch (error) {
         console.error(error)
     }
+    
 }
 </script>
 
