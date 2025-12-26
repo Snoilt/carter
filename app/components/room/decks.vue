@@ -29,13 +29,21 @@ onMounted(async () => {
 						<UIcon name="lucide:play" />
 					</UButton>
 
+					<DeckCreator :deck="deck" @decks-updated="fetchDecks()">
+						<UButton size="xl" block variant="outline">
+							<UIcon name="lucide:pencil-line" />
+						</UButton>
+					</DeckCreator>
+
 					<UButton size="xl" block variant="outline">
-						<UIcon name="lucide:pencil-line" />
+						<UIcon name="lucide:info" />
 					</UButton>
 				</div>
 			</template>
 		</UPageCard>
-		<DeckCreator @deck-created="fetchDecks()">
+
+		<!-- Maybe Move to Parent Component -->
+		<DeckCreator @decks-updated="fetchDecks()">
 			<UButton size="xl" class="mt-5"
 				><UIcon size="20" name="lucide:plus" /> Create new Deck
 			</UButton>

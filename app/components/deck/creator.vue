@@ -5,23 +5,49 @@ const props = defineProps<{
 	deck?: DecksRecord
 }>()
 
-const emit = defineEmits(["deckCreated"])
+const emit = defineEmits(["decksUpdated"])
 
 const deckName = ref("")
 const deckDescription = ref("")
+
+if (props.deck) {
+	deckDescription.value = props.deck.description || ""
+	deckName.value = props.deck.name || ""
+}
 
 const createDeck = async () => {
 	if (pb.authStore.record?.id == undefined) {
 		throw new Error("User not authenticated")
 	}
 
-	pb.collection("decks").create({
-		name: deckName.value,
-		description: deckDescription.value,
-		creator: pb.authStore.record.id,
-	})
-	emit("deckCreated")
-	console.log("Deck created:", deckName.value, deckDescription.value)
+	if (props.deck) {
+		await pb.collection("decks").update(props.deck.id, {
+			name: deckName.value,
+			description: deckDescription.value,
+		})
+	} else {
+		await pb.collection("decks").create({
+			name: deckName.value,
+			description: deckDescription.value,
+			creator: pb.authStore.record.id,
+		})
+	}
+	emit("decksUpdated")
+}
+
+const deleteDeck = async () => {
+	if (!props.deck) return
+
+	try {
+		await pb.collection("decks").delete(props.deck.id)
+		useToast().add({
+			title: "Deck deleted successfully",
+			color: "success",
+		})
+		emit("decksUpdated")
+	} catch (error) {
+		toastError(`${error}`)
+	}
 }
 </script>
 
@@ -43,7 +69,19 @@ const createDeck = async () => {
 						class="w-full"
 					/>
 				</div>
-				<UButton size="xl" block @click="createDeck">Create Deck</UButton>
+			</div>
+		</template>
+		<template #footer="{ close }">
+			<div class="space-y-2 w-full">
+				<div class="flex gap-2">
+					<UButton v-if="props.deck" variant="subtle" @click="(deleteDeck(), close())">
+						<UIcon size="20" name="lucide:trash-2" />
+					</UButton>
+
+					<UButton size="xl" block @click="(createDeck(), close())">
+						{{ props.deck ? "Save Changes" : "Create Deck" }}
+					</UButton>
+				</div>
 			</div>
 		</template>
 	</UModal>
