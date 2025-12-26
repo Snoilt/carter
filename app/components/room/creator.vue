@@ -37,9 +37,6 @@ function createCollection(close: () => void) {
 	close()
 	emit("created")
 	console.log("Collection created, modal closed")
-	//   collectionTitle.value = ""
-	//   collectionDescription.value = ""
-	//   emailList.value = []
 }
 </script>
 

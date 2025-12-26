@@ -3,17 +3,24 @@ import type { DecksRecord } from "~/types/pb"
 
 const props = defineProps<{
 	deck?: DecksRecord
+	roomId?: string
 }>()
 
 const emit = defineEmits(["decksUpdated"])
 
+// ----------------------------------------------------------------------------
+
 const deckName = ref("")
 const deckDescription = ref("")
+
+// ----------------------------------------------------------------------------
 
 if (props.deck) {
 	deckDescription.value = props.deck.description || ""
 	deckName.value = props.deck.name || ""
 }
+
+// ----------------------------------------------------------------------------
 
 const createDeck = async () => {
 	if (pb.authStore.record?.id == undefined) {
@@ -26,14 +33,21 @@ const createDeck = async () => {
 			description: deckDescription.value,
 		})
 	} else {
+		if (!props.roomId) {
+			toastError("Room ID is required to create a deck")
+			return
+		}
 		await pb.collection("decks").create({
 			name: deckName.value,
 			description: deckDescription.value,
 			creator: pb.authStore.record.id,
+			roomId: props.roomId,
 		})
 	}
 	emit("decksUpdated")
 }
+
+// ----------------------------------------------------------------------------
 
 const deleteDeck = async () => {
 	if (!props.deck) return
@@ -54,6 +68,9 @@ const deleteDeck = async () => {
 <template>
 	<UModal title="Create new Deck" aria-describedby="Modal to create new Decks">
 		<slot></slot>
+
+		<!-- ----------------------------------------------------------------------------- -->
+
 		<template #body>
 			<div class="space-y-4">
 				<div class="space-y-2">
@@ -71,6 +88,9 @@ const deleteDeck = async () => {
 				</div>
 			</div>
 		</template>
+
+		<!-- ----------------------------------------------------------------------------- -->
+
 		<template #footer="{ close }">
 			<div class="space-y-2 w-full">
 				<div class="flex gap-2">

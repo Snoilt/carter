@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import type { DecksRecord } from "~/types/pb"
+import type { DecksRecord, RoomsRecord } from "~/types/pb"
 
 const decks = ref<DecksRecord[]>([])
 
+const props = defineProps<{
+	room: RoomsRecord
+}>()
+
 const fetchDecks = async () => {
-	decks.value = await pb.collection("decks").getFullList()
+	// TODO: Create API rules to restrict access
+	decks.value = await pb
+		.collection("decks")
+		.getFullList({ filter: `roomId = "${props.room.id}"` })
 	console.log("decks:", decks.value)
 }
 
@@ -29,11 +36,11 @@ onMounted(async () => {
 						<UIcon name="lucide:play" />
 					</UButton>
 
-					<DeckCreator :deck="deck" @decks-updated="fetchDecks()">
+					<NuxtLink :to="`/deck/${deck.id}`">
 						<UButton size="xl" block variant="outline">
 							<UIcon name="lucide:pencil-line" />
 						</UButton>
-					</DeckCreator>
+					</NuxtLink>
 
 					<UButton size="xl" block variant="outline">
 						<UIcon name="lucide:info" />
@@ -43,7 +50,7 @@ onMounted(async () => {
 		</UPageCard>
 
 		<!-- Maybe Move to Parent Component -->
-		<DeckCreator @decks-updated="fetchDecks()">
+		<DeckCreator :room-id="props.room.id" @decks-updated="fetchDecks()">
 			<UButton size="xl" class="mt-5"
 				><UIcon size="20" name="lucide:plus" /> Create new Deck
 			</UButton>
