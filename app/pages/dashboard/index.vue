@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DeckcollectionsResponse } from "~/types/pb"
+import type { RoomsResponse } from "~/types/pb"
 
-const collections = ref<DeckcollectionsResponse[]>([])
+const collections = ref<RoomsResponse[]>([])
 const loading = ref(false)
 
 const fetchCollections = async () => {
@@ -12,12 +12,10 @@ const fetchCollections = async () => {
 			throw new Error("User must be logged in to view collections")
 		}
 
-		const result = await pb
-			.collection("deckcollections")
-			.getFullList<DeckcollectionsResponse>(undefined, {
-				filter: `user ~ "${user.id}"`,
-				sort: "-created",
-			})
+		const result = await pb.collection("rooms").getFullList<RoomsResponse>(undefined, {
+			filter: `user ~ "${user.id}"`,
+			sort: "-created",
+		})
 		console.log(collections)
 		collections.value = result
 		console.log("Collections fetched:", collections.value)
@@ -37,11 +35,11 @@ onMounted(() => {
 	<UContainer class="space-y-6">
 		<h1 class="mt-5 text-xl font-bold">Your Collections</h1>
 		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-			<DeckCreator @created="fetchCollections">
+			<RoomCreator @created="fetchCollections">
 				<UButton variant="outline" icon="lucide:plus" size="xl" class="justify-center"
 					>Create Collection</UButton
 				>
-			</DeckCreator>
+			</RoomCreator>
 
 			<UCard v-if="!loading && collections.length === 0" variant="subtle">
 				<template #header>
@@ -58,7 +56,7 @@ onMounted(() => {
 				<template #header>
 					<div class="flex items-center justify-between">
 						<h1>{{ collection.name }}</h1>
-						<DeckDropdown :collection="collection" @action="fetchCollections" />
+						<RoomDropdown :collection="collection" @action="fetchCollections" />
 					</div>
 				</template>
 
@@ -71,7 +69,7 @@ onMounted(() => {
 
 				<template #footer>
 					<UButton size="xl" block variant="outline"
-						><NuxtLink :to="`/decks/${collection.id}`">Join</NuxtLink></UButton
+						><NuxtLink :to="`/room/${collection.id}`">Join</NuxtLink></UButton
 					>
 				</template>
 			</UCard>

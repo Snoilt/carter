@@ -6,7 +6,7 @@ routerAdd("GET", "/api/room/leave/{id}", (event_) => {
 	if (!event_.auth) return event_.json(401, { message: "Unauthorized" })
 
 	const auth = event_.auth
-	const deckcollection = $app.findRecordById("deckcollections", collectionId)
+	const deckcollection = $app.findRecordById("rooms", collectionId)
 
 	const adminArray = deckcollection.get("admins")
 

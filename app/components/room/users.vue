@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { DeckcollectionsRecord } from "~/types/pb"
+import type { RoomsRecord } from "~/types/pb"
 
 const props = defineProps<{
-	collection: DeckcollectionsRecord
+	collection: RoomsRecord
 }>()
 
-const deckUsers = await pb.collection("viewDeckUser").getFullList({
-	filter: `deckcollection = "${props.collection.id}"`,
+const deckUsers = await pb.collection("rooms_user_info").getFullList({
+	filter: `rooms = "${props.collection.id}"`,
 })
 </script>
 

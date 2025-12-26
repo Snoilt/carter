@@ -1,9 +1,9 @@
 /**
- * This file was @generated using pocketbase-typegen
- */
+* This file was @generated using pocketbase-typegen
+*/
 
-import type PocketBase from "pocketbase"
-import type { RecordService } from "pocketbase"
+import type PocketBase from 'pocketbase'
+import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	Authorigins = "_authOrigins",
@@ -12,13 +12,17 @@ export enum Collections {
 	Otps = "_otps",
 	Superusers = "_superusers",
 	Cards = "cards",
-	Deckcollections = "deckcollections",
+	Decks = "decks",
+	Rooms = "rooms",
+	RoomsUserInfo = "rooms_user_info",
 	Users = "users",
 }
 
 // Alias types for improved usability
 export type IsoDateString = string
+export type IsoAutoDateString = string & { readonly autodate: unique symbol }
 export type RecordIdString = string
+export type FileNameString = string & { readonly filename: unique symbol }
 export type HTMLString = string
 
 type ExpandType<T> = unknown extends T
@@ -45,104 +49,116 @@ export type AuthSystemFields<T = unknown> = {
 
 export type AuthoriginsRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	fingerprint: string
 	id: string
 	recordRef: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type ExternalauthsRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
 	provider: string
 	providerId: string
 	recordRef: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type MfasRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
 	method: string
 	recordRef: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type OtpsRecord = {
 	collectionRef: string
-	created?: IsoDateString
+	created: IsoAutoDateString
 	id: string
 	password: string
 	recordRef: string
 	sentTo?: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
 export type SuperusersRecord = {
-	created?: IsoDateString
+	created: IsoAutoDateString
 	email: string
 	emailVisibility?: boolean
 	id: string
 	password: string
 	tokenKey: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	verified?: boolean
 }
 
 export type CardsRecord = {
-	created?: IsoDateString
+	created: IsoAutoDateString
 	field?: RecordIdString
 	id: string
 	question?: HTMLString
 	solution?: HTMLString
 	title?: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 }
 
-export type DeckcollectionsRecord = {
+export type DecksRecord<TplayData = unknown> = {
+	created: IsoAutoDateString
+	description?: string
+	id: string
+	name?: string
+	playData?: null | TplayData
+	roomId?: RecordIdString
+	updated: IsoAutoDateString
+}
+
+export type RoomsRecord = {
 	admins?: RecordIdString[]
-	created?: IsoDateString
+	created: IsoAutoDateString
 	creator: RecordIdString
 	description?: string
 	id: string
 	name: string
-	updated?: IsoDateString
-	user: RecordIdString[]
+	updated: IsoAutoDateString
+	user?: RecordIdString[]
+}
+
+export type RoomsUserInfoRecord = {
+	id: string
+	rooms?: RecordIdString
+	userAvatar?: FileNameString
+	userId?: RecordIdString
+	userName: string
 }
 
 export type UsersRecord = {
-	avatar?: string
-	created?: IsoDateString
+	avatar?: FileNameString
+	created: IsoAutoDateString
 	email: string
 	emailVisibility?: boolean
 	id: string
-	name?: string
+	name: string
 	password: string
 	tokenKey: string
-	updated?: IsoDateString
+	updated: IsoAutoDateString
 	verified?: boolean
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> &
-	BaseSystemFields<Texpand>
-export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> &
-	BaseSystemFields<Texpand>
-export type MfasResponse<Texpand = unknown> = Required<MfasRecord> &
-	BaseSystemFields<Texpand>
-export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> &
-	BaseSystemFields<Texpand>
-export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> &
-	AuthSystemFields<Texpand>
-export type CardsResponse<Texpand = unknown> = Required<CardsRecord> &
-	BaseSystemFields<Texpand>
-export type DeckcollectionsResponse<Texpand = unknown> = Required<DeckcollectionsRecord> &
-	BaseSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> &
-	AuthSystemFields<Texpand>
+export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
+export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
+export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
+export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
+export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
+export type CardsResponse<Texpand = unknown> = Required<CardsRecord> & BaseSystemFields<Texpand>
+export type DecksResponse<TplayData = unknown, Texpand = unknown> = Required<DecksRecord<TplayData>> & BaseSystemFields<Texpand>
+export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
+export type RoomsUserInfoResponse<Texpand = unknown> = Required<RoomsUserInfoRecord> & BaseSystemFields<Texpand>
+export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
@@ -153,7 +169,9 @@ export type CollectionRecords = {
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
 	cards: CardsRecord
-	deckcollections: DeckcollectionsRecord
+	decks: DecksRecord
+	rooms: RoomsRecord
+	rooms_user_info: RoomsUserInfoRecord
 	users: UsersRecord
 }
 
@@ -164,20 +182,74 @@ export type CollectionResponses = {
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
 	cards: CardsResponse
-	deckcollections: DeckcollectionsResponse
+	decks: DecksResponse
+	rooms: RoomsResponse
+	rooms_user_info: RoomsUserInfoResponse
 	users: UsersResponse
 }
+
+// Utility types for create/update operations
+
+type ProcessCreateAndUpdateFields<T> = Omit<{
+	// Omit AutoDate fields
+	[K in keyof T as Extract<T[K], IsoAutoDateString> extends never ? K : never]: 
+		// Convert FileNameString to File
+		T[K] extends infer U ? 
+			U extends (FileNameString | FileNameString[]) ? 
+				U extends any[] ? File[] : File 
+			: U
+		: never
+}, 'id'>
+
+// Create type for Auth collections
+export type CreateAuth<T> = {
+	id?: RecordIdString
+	email: string
+	emailVisibility?: boolean
+	password: string
+	passwordConfirm: string
+	verified?: boolean
+} & ProcessCreateAndUpdateFields<T>
+
+// Create type for Base collections
+export type CreateBase<T> = {
+	id?: RecordIdString
+} & ProcessCreateAndUpdateFields<T>
+
+// Update type for Auth collections
+export type UpdateAuth<T> = Partial<
+	Omit<ProcessCreateAndUpdateFields<T>, keyof AuthSystemFields>
+> & {
+	email?: string
+	emailVisibility?: boolean
+	oldPassword?: string
+	password?: string
+	passwordConfirm?: string
+	verified?: boolean
+}
+
+// Update type for Base collections
+export type UpdateBase<T> = Partial<
+	Omit<ProcessCreateAndUpdateFields<T>, keyof BaseSystemFields>
+>
+
+// Get the correct create type for any collection
+export type Create<T extends keyof CollectionResponses> =
+	CollectionResponses[T] extends AuthSystemFields
+		? CreateAuth<CollectionRecords[T]>
+		: CreateBase<CollectionRecords[T]>
+
+// Get the correct update type for any collection
+export type Update<T extends keyof CollectionResponses> =
+	CollectionResponses[T] extends AuthSystemFields
+		? UpdateAuth<CollectionRecords[T]>
+		: UpdateBase<CollectionRecords[T]>
 
 // Type for usage with type asserted PocketBase instance
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
-export type TypedPocketBase = PocketBase & {
-	collection(idOrName: "_authOrigins"): RecordService<AuthoriginsResponse>
-	collection(idOrName: "_externalAuths"): RecordService<ExternalauthsResponse>
-	collection(idOrName: "_mfas"): RecordService<MfasResponse>
-	collection(idOrName: "_otps"): RecordService<OtpsResponse>
-	collection(idOrName: "_superusers"): RecordService<SuperusersResponse>
-	collection(idOrName: "cards"): RecordService<CardsResponse>
-	collection(idOrName: "deckcollections"): RecordService<DeckcollectionsResponse>
-	collection(idOrName: "users"): RecordService<UsersResponse>
-}
+export type TypedPocketBase = {
+	collection<T extends keyof CollectionResponses>(
+		idOrName: T
+	): RecordService<CollectionResponses[T]>
+} & PocketBase

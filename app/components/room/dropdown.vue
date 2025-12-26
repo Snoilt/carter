@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { removeCollection } from "~/composables/database/remove-collection"
-import type { DeckcollectionsResponse } from "~/types/pb"
+import type { RoomsResponse } from "~/types/pb"
 
 const emit = defineEmits(["action"])
 
 const user = new User()
 
 const props = defineProps<{
-	collection: DeckcollectionsResponse
+	collection: RoomsResponse
 }>()
 
 const items = computed(() => {

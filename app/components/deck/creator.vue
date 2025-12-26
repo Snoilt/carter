@@ -1,83 +1,50 @@
 <script setup lang="ts">
-import type { DeckcollectionsRecord } from "~/types/pb"
+import type { DecksRecord } from "~/types/pb"
 
-const emit = defineEmits(["created"])
+const props = defineProps<{
+	deck?: DecksRecord
+}>()
 
-const user = new User()
+const emit = defineEmits(["deckCreated"])
 
-const collectionTitle = ref("")
-const collectionDescription = ref("")
+const deckName = ref("")
+const deckDescription = ref("")
 
-//TODO: Implement sharing functionality
-const emailList = ref<string[]>([])
-
-function createCollection(close: () => void) {
-	if (!user) {
-		throw new Error("User must be logged in to create a collection")
+const createDeck = async () => {
+	if (pb.authStore.record?.id == undefined) {
+		throw new Error("User not authenticated")
 	}
 
-	const newCollection: DeckcollectionsRecord = {
-		id: "",
-		user: [user.id],
-		creator: user.id,
-		name: collectionTitle.value,
-		description: collectionDescription.value,
-	}
-
-	try {
-		pb.collection("deckcollections").create(newCollection)
-		useToast().add({
-            title: "Deck created successfully",
-			color: "success",
-		})
-	} catch (error) {
-        toastError(`${error}`)
-	}
-    
-	close()
-    emit("created")
-	console.log("Collection created, modal closed")
-	//   collectionTitle.value = ""
-	//   collectionDescription.value = ""
-	//   emailList.value = []
+	pb.collection("decks").create({
+		name: deckName.value,
+		description: deckDescription.value,
+		creator: pb.authStore.record.id,
+	})
+	emit("deckCreated")
+	console.log("Deck created:", deckName.value, deckDescription.value)
 }
 </script>
 
 <template>
-	<UModal title="Create a new Collection">
+	<UModal title="Create new Deck" aria-describedby="Modal to create new Decks">
+		<slot></slot>
 		<template #body>
-			<UForm class="space-y-4">
-				<UFormField name="title" label="Collection Title">
+			<div class="space-y-4">
+				<div class="space-y-2">
+					<h1>Deck Name</h1>
+					<UInput v-model="deckName" placeholder="Subject" size="xl" class="w-full" />
+				</div>
+				<div class="space-y-2">
+					<h1>Deck Description</h1>
 					<UInput
-						v-model="collectionTitle"
-						placeholder="Biology"
+						v-model="deckDescription"
+						placeholder="Description"
 						size="xl"
 						class="w-full"
 					/>
-				</UFormField>
-				<UFormField name="description" label="Description (optional)">
-					<UInput
-						v-model="collectionDescription"
-						placeholder="My Biology Collection"
-						size="xl"
-						class="w-full"
-					/>
-				</UFormField>
-				<UFormField name="emails" label="Share with Others">
-					<UInputTags
-						v-model="emailList"
-						placeholder="Press enter to add E-Mails"
-						size="xl"
-						class="w-full"
-					/>
-				</UFormField>
-			</UForm>
+				</div>
+				<UButton size="xl" block @click="createDeck">Create Deck</UButton>
+			</div>
 		</template>
-		<template #footer="{ close }">
-			<UButton color="primary" size="xl" class="w-full" @click="createCollection(close)"
-				>Create Deck</UButton
-			>
-		</template>
-		<slot />
 	</UModal>
 </template>
