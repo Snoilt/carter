@@ -1,9 +1,9 @@
 /**
- * This file was @generated using pocketbase-typegen
- */
+* This file was @generated using pocketbase-typegen
+*/
 
-import type PocketBase from "pocketbase"
-import type { RecordService } from "pocketbase"
+import type PocketBase from 'pocketbase'
+import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	Authorigins = "_authOrigins",
@@ -106,20 +106,24 @@ export type CardsRecord = {
 	updated: IsoAutoDateString
 }
 
-export type DecksRecord = {
+export type DecksRecord<TplayData = unknown> = {
 	created: IsoAutoDateString
+	description?: string
 	id: string
+	name?: string
+	playData?: null | TplayData
+	roomId?: RecordIdString
 	updated: IsoAutoDateString
 }
 
 export type RoomsRecord = {
 	admins?: RecordIdString[]
-	created?: IsoAutoDateString
+	created: IsoAutoDateString
 	creator: RecordIdString
 	description?: string
 	id: string
 	name: string
-	updated?: IsoAutoDateString
+	updated: IsoAutoDateString
 	user?: RecordIdString[]
 }
 
@@ -145,26 +149,16 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> &
-	BaseSystemFields<Texpand>
-export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> &
-	BaseSystemFields<Texpand>
-export type MfasResponse<Texpand = unknown> = Required<MfasRecord> &
-	BaseSystemFields<Texpand>
-export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> &
-	BaseSystemFields<Texpand>
-export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> &
-	AuthSystemFields<Texpand>
-export type CardsResponse<Texpand = unknown> = Required<CardsRecord> &
-	BaseSystemFields<Texpand>
-export type DecksResponse<Texpand = unknown> = Required<DecksRecord> &
-	BaseSystemFields<Texpand>
-export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> &
-	BaseSystemFields<Texpand>
-export type RoomsUserInfoResponse<Texpand = unknown> = Required<RoomsUserInfoRecord> &
-	BaseSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> &
-	AuthSystemFields<Texpand>
+export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
+export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
+export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
+export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
+export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
+export type CardsResponse<Texpand = unknown> = Required<CardsRecord> & BaseSystemFields<Texpand>
+export type DecksResponse<TplayData = unknown, Texpand = unknown> = Required<DecksRecord<TplayData>> & BaseSystemFields<Texpand>
+export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
+export type RoomsUserInfoResponse<Texpand = unknown> = Required<RoomsUserInfoRecord> & BaseSystemFields<Texpand>
+export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
@@ -196,21 +190,16 @@ export type CollectionResponses = {
 
 // Utility types for create/update operations
 
-type ProcessCreateAndUpdateFields<T> = Omit<
-	{
-		// Omit AutoDate fields
-		[K in keyof T as Extract<T[K], IsoAutoDateString> extends never
-			? K
-			: never]: T[K] extends infer U // Convert FileNameString to File
-			? U extends FileNameString | FileNameString[]
-				? U extends any[]
-					? File[]
-					: File
-				: U
-			: never
-	},
-	"id"
->
+type ProcessCreateAndUpdateFields<T> = Omit<{
+	// Omit AutoDate fields
+	[K in keyof T as Extract<T[K], IsoAutoDateString> extends never ? K : never]: 
+		// Convert FileNameString to File
+		T[K] extends infer U ? 
+			U extends (FileNameString | FileNameString[]) ? 
+				U extends any[] ? File[] : File 
+			: U
+		: never
+}, 'id'>
 
 // Create type for Auth collections
 export type CreateAuth<T> = {
@@ -261,6 +250,6 @@ export type Update<T extends keyof CollectionResponses> =
 
 export type TypedPocketBase = {
 	collection<T extends keyof CollectionResponses>(
-		idOrName: T,
+		idOrName: T
 	): RecordService<CollectionResponses[T]>
 } & PocketBase
