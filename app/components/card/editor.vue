@@ -144,6 +144,7 @@ const items: EditorToolbarItem[][] = [
 			v-model="modelValue"
 			content-type="markdown"
 			class="w-full min-h-50 flex flex-col gap-4"
+			placeholder="hmmm..."
 		>
 			<UEditorToolbar :editor="editor" :items="items" class="sm:px-8 overflow-x-auto" />
 		</UEditor>

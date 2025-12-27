@@ -2,6 +2,9 @@
 import type { CardsRecord, DecksRecord } from "~/types/pb"
 
 const open = ref(false)
+defineExpose({
+	open,
+})
 
 const props = defineProps<{
 	card?: CardsRecord
@@ -10,13 +13,17 @@ const props = defineProps<{
 
 const emit = defineEmits(["cardUpdate"])
 
-const frontContent = ref<string>("")
-const backContent = ref<string>("")
+const frontContent = ref<string>()
+const backContent = ref<string>()
+
+// ----------------------------------------------------------------------------
 
 if (props.card) {
 	frontContent.value = props.card.question || ""
 	backContent.value = props.card.solution || ""
 }
+
+// ----------------------------------------------------------------------------
 
 const saveCard = async () => {
 	if (props.card) {
@@ -35,10 +42,6 @@ const saveCard = async () => {
 	emit("cardUpdate")
 	open.value = false
 }
-
-defineExpose({
-	open,
-})
 </script>
 
 <template>
