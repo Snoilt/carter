@@ -49,6 +49,7 @@ const createDeck = async () => {
 
 // ----------------------------------------------------------------------------
 
+//TODO: Route back to room page after deletion
 const deleteDeck = async () => {
 	if (!props.deck) return
 

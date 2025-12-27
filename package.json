@@ -17,6 +17,7 @@
 		"@nuxt/eslint": "^1.9.0",
 		"@nuxt/icon": "2.0.0",
 		"@nuxt/ui": "^4.0.0-alpha.2",
+		"dompurify": "^3.3.1",
 		"eslint": "^9.0.0",
 		"nuxt": "^4.1.2",
 		"ogl": "^1.0.11",

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { RoomsRecord } from "~/types/pb"
-
 const emit = defineEmits(["created"])
 
 const user = new User()
@@ -16,16 +14,14 @@ function createCollection(close: () => void) {
 		throw new Error("User must be logged in to create a collection")
 	}
 
-	const newCollection: RoomsRecord = {
-		id: "",
-		user: [user.id],
-		creator: user.id,
-		name: collectionTitle.value,
-		description: collectionDescription.value,
-	}
-
 	try {
-		pb.collection("rooms").create(newCollection)
+		pb.collection("rooms").create({
+			id: "",
+			user: [user.id],
+			creator: user.id,
+			name: collectionTitle.value,
+			description: collectionDescription.value,
+		})
 		useToast().add({
 			title: "Deck created successfully",
 			color: "success",
