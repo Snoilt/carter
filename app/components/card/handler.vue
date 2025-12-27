@@ -42,8 +42,25 @@ const saveCard = async () => {
 	emit("cardUpdate")
 	open.value = false
 }
-</script>
 
+// ----------------------------------------------------------------------------
+
+const deleteCard = async () => {
+	if (!props.card) return
+
+	try {
+		await pb.collection("cards").delete(props.card.id)
+		useToast().add({
+			title: "Card deleted successfully",
+			color: "success",
+		})
+		emit("cardUpdate")
+		open.value = false
+	} catch (error) {
+		toastError(`${error}`)
+	}
+}
+</script>
 <template>
 	<USlideover
 		v-model:open="open"
@@ -62,7 +79,16 @@ const saveCard = async () => {
 					<h1 class="text-2xl font-bold">Back</h1>
 					<CardEditor v-model="backContent" />
 				</div>
-				<UButton size="xl" block @click="saveCard">Save</UButton>
+				<div class="flex gap-2">
+					<UButton
+						v-if="props.card"
+						icon="lucide:trash"
+						size="xl"
+						variant="subtle"
+						@click="deleteCard"
+					/>
+					<UButton size="xl" block @click="saveCard">Save</UButton>
+				</div>
 			</div>
 		</template>
 	</USlideover>
