@@ -28,7 +28,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 	<UApp>
 		<UHeader mode="slideover">
 			<template #title>
-				<h1>Carter</h1>
+				<h1>Kardr</h1>
 			</template>
 
 			<UNavigationMenu :items="items" />

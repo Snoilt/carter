@@ -2,10 +2,11 @@
 import type { DecksRecord, RoomsRecord } from "~/types/pb"
 
 const decks = ref<DecksRecord[]>([])
-
 const props = defineProps<{
 	room: RoomsRecord
 }>()
+
+// ----------------------------------------------------------------------------
 
 const fetchDecks = async () => {
 	// TODO: Create API rules to restrict access
@@ -15,6 +16,8 @@ const fetchDecks = async () => {
 	console.log("decks:", decks.value)
 }
 
+// ----------------------------------------------------------------------------
+
 onMounted(async () => {
 	await fetchDecks()
 })
@@ -23,6 +26,8 @@ onMounted(async () => {
 <template>
 	<UPageList>
 		<h1 class="font-bold text-xl">Decks</h1>
+
+		<!-- ---------------------------------------------------------------------------- -->
 		<UPageCard
 			v-for="deck in decks"
 			:key="deck.id"
@@ -48,6 +53,8 @@ onMounted(async () => {
 				</div>
 			</template>
 		</UPageCard>
+
+		<!-- ---------------------------------------------------------------------------- -->
 
 		<!-- Maybe Move to Parent Component -->
 		<DeckCreator :room-id="props.room.id" @decks-updated="fetchDecks()">

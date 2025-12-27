@@ -60,6 +60,7 @@ const deleteDeck = async () => {
 			color: "success",
 		})
 		emit("decksUpdated")
+		navigateTo(`/room/${props.deck.roomId}`)
 	} catch (error) {
 		toastError(`${error}`)
 	}

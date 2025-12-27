@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CardsRecord, DecksRecord } from "~/types/pb"
 import DOMPurify from "dompurify"
+import type { TableColumn } from "@nuxt/ui"
 
 const props = defineProps<{
 	deck: DecksRecord
@@ -10,7 +11,36 @@ const props = defineProps<{
 
 const cards = ref<CardsRecord[]>([])
 const tableData = ref<Array<{ front: string; back: string }>>([])
+const cardHandlerReference = ref()
 
+type TableColumnData = {
+	front: string
+	back: string
+}
+
+const UButton = resolveComponent("UButton")
+const columns: TableColumn<TableColumnData>[] = [
+	{
+		id: "actions",
+		header: "Edit",
+		cell: () => {
+			return h(UButton, {
+				icon: "lucide:pencil-line",
+				color: "primary",
+
+				onClick: () => (cardHandlerReference.value.open = true),
+			})
+		},
+	},
+	{
+		accessorKey: "front",
+		header: "Front",
+	},
+	{
+		accessorKey: "back",
+		header: "Back",
+	},
+]
 // ----------------------------------------------------------------------------
 
 //TODO: add api rules to restrict access
@@ -43,5 +73,7 @@ onMounted(async () => {
 </script>
 
 <template>
-	<UTable :data="tableData" />
+	<CardHandler ref="cardHandlerReference" />
+	<UTable :columns="columns" :data="tableData" />
+	<UButton icon="lucide:plus" size="xl" block>New Card</UButton>
 </template>
