@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { EditorToolbarItem } from "@nuxt/ui"
 
+const modelValue = defineModel<string>()
+
 const items: EditorToolbarItem[][] = [
 	// Block types
 	[
@@ -139,6 +141,7 @@ const items: EditorToolbarItem[][] = [
 	<UContainer class="border border-gray-300 rounded-md p-4 mt-4">
 		<UEditor
 			v-slot="{ editor }"
+			v-model="modelValue"
 			content-type="markdown"
 			class="w-full min-h-50 flex flex-col gap-4"
 		>

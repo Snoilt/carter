@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { CardsRecord, DecksRecord } from "~/types/pb"
-import DOMPurify from "dompurify"
 import type { TableColumn } from "@nuxt/ui"
 
 const props = defineProps<{
@@ -10,34 +9,32 @@ const props = defineProps<{
 // ----------------------------------------------------------------------------
 
 const cards = ref<CardsRecord[]>([])
-const tableData = ref<Array<{ front: string; back: string }>>([])
 const cardHandlerReference = ref()
 
-type TableColumnData = {
-	front: string
-	back: string
-}
-
-const UButton = resolveComponent("UButton")
-const columns: TableColumn<TableColumnData>[] = [
+const CardHandler = resolveComponent("CardHandler")
+const columns: TableColumn<CardsRecord>[] = [
 	{
 		id: "actions",
 		header: "Edit",
-		cell: () => {
-			return h(UButton, {
+		cell: ({ row }) => {
+			return h(CardHandler, {
 				icon: "lucide:pencil-line",
 				color: "primary",
-
+				card: cards.value[row.index],
+				deck: props.deck,
+				onCardUpdate: async () => {
+					await fetchCards()
+				},
 				onClick: () => (cardHandlerReference.value.open = true),
 			})
 		},
 	},
 	{
-		accessorKey: "front",
+		accessorKey: "question",
 		header: "Front",
 	},
 	{
-		accessorKey: "back",
+		accessorKey: "solution",
 		header: "Back",
 	},
 ]
@@ -56,24 +53,16 @@ const fetchCards = async () => {
 
 // ----------------------------------------------------------------------------
 
-const formatCards = () => {
-	return cards.value.map((card) => ({
-		front: DOMPurify.sanitize(card.question ?? "", { USE_PROFILES: { html: false } }),
-		back: DOMPurify.sanitize(card.solution ?? "", { USE_PROFILES: { html: false } }),
-	}))
-}
-
-// ----------------------------------------------------------------------------
-
 onMounted(async () => {
 	await fetchCards()
-	tableData.value = formatCards()
 	console.log("Deck:", props.deck, "Cards fetched", cards.value)
 })
 </script>
 
 <template>
-	<CardHandler ref="cardHandlerReference" />
-	<UTable :columns="columns" :data="tableData" />
-	<UButton icon="lucide:plus" size="xl" block>New Card</UButton>
+	<!-- <CardHandler ref="cardHandlerReference" /> -->
+	<UTable :columns="columns" :data="cards" />
+	<CardHandler :deck="props.deck" @card-update="fetchCards()">
+		<UButton icon="lucide:plus" size="xl" block>New Card</UButton>
+	</CardHandler>
 </template>
