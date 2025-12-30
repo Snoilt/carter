@@ -37,9 +37,11 @@ onMounted(async () => {
 		>
 			<template #footer>
 				<div class="flex space-x-2">
-					<UButton size="xl" block variant="outline">
-						<UIcon name="lucide:play" />
-					</UButton>
+					<NuxtLink :to="`/play/${deck.id}`">
+						<UButton size="xl" block variant="outline">
+							<UIcon name="lucide:play" />
+						</UButton>
+					</NuxtLink>
 
 					<NuxtLink :to="`/deck/${deck.id}`">
 						<UButton size="xl" block variant="outline">

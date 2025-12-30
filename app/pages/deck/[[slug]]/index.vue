@@ -4,6 +4,8 @@ const router = useRouter()
 
 const deck = ref<DecksRecord>()
 
+// ----------------------------------------------------------------------------
+
 const fetchDeck = async () => {
 	try {
 		deck.value = await pb
@@ -13,6 +15,8 @@ const fetchDeck = async () => {
 		console.error("Failed to fetch deck:", error)
 	}
 }
+
+// ----------------------------------------------------------------------------
 
 onMounted(async () => {
 	await fetchDeck()
