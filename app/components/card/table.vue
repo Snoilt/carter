@@ -9,7 +9,6 @@ const props = defineProps<{
 // ----------------------------------------------------------------------------
 
 const cards = ref<CardsRecord[]>([])
-const cardHandlerReference = ref()
 
 const CardHandler = resolveComponent("CardHandler")
 const columns: TableColumn<CardsRecord>[] = [
@@ -25,7 +24,6 @@ const columns: TableColumn<CardsRecord>[] = [
 				onCardUpdate: async () => {
 					await fetchCards()
 				},
-				onClick: () => (cardHandlerReference.value.open = true),
 			})
 		},
 	},

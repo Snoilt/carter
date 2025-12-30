@@ -6,7 +6,7 @@ const currentRoom = ref<RoomsRecord>()
 
 onMounted(async () => {
 	try {
-		currentRoom.value = await pb.collection("rooms").getOne(route.params.slug as string, {
+		currentRoom.value = await pb.collection("rooms").getOne(route.params.room as string, {
 			expand: "user.name",
 		})
 	} catch (error) {

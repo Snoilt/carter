@@ -32,7 +32,7 @@ const fetchCards = async () => {
 	try {
 		cards.value = await pb
 			.collection("cards")
-			.getFullList({ filter: `deck = "${router.currentRoute.value.params.slug}"` })
+			.getFullList({ filter: `deck = "${router.currentRoute.value.params.deck}"` })
 	} catch (error) {
 		console.error("Failed to fetch cards:", error)
 	}

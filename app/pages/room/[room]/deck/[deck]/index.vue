@@ -10,7 +10,7 @@ const fetchDeck = async () => {
 	try {
 		deck.value = await pb
 			.collection("decks")
-			.getOne(router.currentRoute.value.params.slug as string)
+			.getOne(router.currentRoute.value.params.deck as string)
 	} catch (error) {
 		console.error("Failed to fetch deck:", error)
 	}

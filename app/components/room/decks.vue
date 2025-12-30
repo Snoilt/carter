@@ -37,13 +37,13 @@ onMounted(async () => {
 		>
 			<template #footer>
 				<div class="flex space-x-2">
-					<NuxtLink :to="`/play/${deck.id}`">
+					<NuxtLink :to="`/room/${props.room.id}/play/${deck.id}`">
 						<UButton size="xl" block variant="outline">
 							<UIcon name="lucide:play" />
 						</UButton>
 					</NuxtLink>
 
-					<NuxtLink :to="`/deck/${deck.id}`">
+					<NuxtLink :to="`/room/${props.room.id}/deck/${deck.id}`">
 						<UButton size="xl" block variant="outline">
 							<UIcon name="lucide:pencil-line" />
 						</UButton>
