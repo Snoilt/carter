@@ -1,4 +1,4 @@
-import "../pb_data/types.d.ts"
+// import "../pb_data/types.d.ts"
 
 onRecordAfterUpdateSuccess((error) => {
 	if (error.record?.get("user").length == 0) {

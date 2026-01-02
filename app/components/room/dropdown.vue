@@ -10,6 +10,8 @@ const props = defineProps<{
 	collection: RoomsResponse
 }>()
 
+const isModalOpen = ref(false)
+
 const items = computed(() => {
 	const baseItems = [
 		{
@@ -17,8 +19,7 @@ const items = computed(() => {
 			icon: "lucide:pencil",
 			show: user.getRole(props.collection) >= 1,
 			onSelect: (_event: Event) => {
-				emit("action")
-				console.log("Edit action selected")
+				isModalOpen.value = true
 			},
 		},
 		{ label: "Share", icon: "lucide:share-2", show: true },
@@ -39,6 +40,7 @@ const items = computed(() => {
 </script>
 
 <template>
+	<RoomCreator v-model:open="isModalOpen" @created="emit('action')" />
 	<UDropdownMenu :ui="{ content: 'w-40' }" :items="items">
 		<UButton variant="ghost" size="sm" icon="lucide:more-horizontal" />
 	</UDropdownMenu>

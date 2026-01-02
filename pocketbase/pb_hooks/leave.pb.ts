@@ -1,4 +1,4 @@
-import "../pb_data/types.d.ts"
+// import "../pb_data/types.d.ts"
 
 routerAdd("GET", "/api/room/leave/{id}", (event_) => {
 	if (!event_.request) return event_.json(400, { message: "Invalid request" })

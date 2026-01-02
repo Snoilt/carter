@@ -1,12 +1,13 @@
 <script setup lang="ts">
 const emit = defineEmits(["created"])
 
+const open = defineModel<boolean>("open")
+
 const user = new User()
 
 const collectionTitle = ref("")
 const collectionDescription = ref("")
 
-//TODO: Implement sharing functionality
 const emailList = ref<string[]>([])
 
 function createCollection(close: () => void) {
@@ -37,7 +38,11 @@ function createCollection(close: () => void) {
 </script>
 
 <template>
-	<UModal title="Create a new Collection">
+	<UModal
+		v-model:open="open"
+		aria-describedby="create-collection-modal"
+		title="Create a new Collection"
+	>
 		<template #body>
 			<UForm class="space-y-4">
 				<UFormField name="title" label="Collection Title">
