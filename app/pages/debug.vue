@@ -1,13 +1,16 @@
 <script setup lang="ts">
 const review = async () => {
 	try {
-		await pb.send("/api/card/review", {
-			method: "POST",
-			body: JSON.stringify({
-				cardId: "example card id",
-				rating: 3,
+		console.log(
+			await pb.send("/api/learn/review", {
+				method: "POST",
+				body: JSON.stringify({
+					usercardId: "dcsfzgeel4ym54x",
+					rating: 1,
+					attemptId: "testattemptid7",
+				}),
 			}),
-		})
+		)
 	} catch (error) {
 		console.error("Failed to review card:", error)
 	}
@@ -16,9 +19,10 @@ const review = async () => {
 //DECK ID AUSFÜLLEN FÜR TESTEN
 const nextCard = async () => {
 	try {
-		await pb.send("/api/card/next/{enter deck id here}", {
+		const response = await pb.send(`/api/learn/next/wgq3p3dgkri7e97`, {
 			method: "GET",
 		})
+		console.log(response)
 	} catch (error) {
 		console.error("Failed to review card:", error)
 	}

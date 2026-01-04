@@ -13,8 +13,12 @@ export enum Collections {
 	Superusers = "_superusers",
 	Cards = "cards",
 	Decks = "decks",
+	FsrsParameterSets = "fsrs_parameter_sets",
 	Rooms = "rooms",
 	RoomsUserInfo = "rooms_user_info",
+	UserCardFsrsState = "user_card_fsrs_state",
+	UserCards = "user_cards",
+	UserReviews = "user_reviews",
 	Users = "users",
 }
 
@@ -98,22 +102,32 @@ export type SuperusersRecord = {
 
 export type CardsRecord = {
 	created: IsoAutoDateString
-	field?: RecordIdString
+	deck?: RecordIdString
 	id: string
 	question?: HTMLString
 	solution?: HTMLString
-	title?: string
 	updated: IsoAutoDateString
 }
 
 export type DecksRecord<TplayData = unknown> = {
 	created: IsoAutoDateString
+	creator?: RecordIdString
 	description?: string
 	id: string
 	name?: string
 	playData?: null | TplayData
-	roomId?: RecordIdString
+	roomId: RecordIdString
 	updated: IsoAutoDateString
+}
+
+export type FsrsParameterSetsRecord<Tweigths_json = unknown> = {
+	created: IsoAutoDateString
+	deck_id?: RecordIdString
+	desired_retention?: number
+	id: string
+	updated: IsoAutoDateString
+	user_id?: RecordIdString
+	weigths_json?: null | Tweigths_json
 }
 
 export type RoomsRecord = {
@@ -133,6 +147,48 @@ export type RoomsUserInfoRecord = {
 	userAvatar?: FileNameString
 	userId?: RecordIdString
 	userName: string
+}
+
+export enum UserCardFsrsStateStateOptions {
+	"new" = "new",
+	"learning" = "learning",
+	"review" = "review",
+	"relearning" = "relearning",
+}
+export type UserCardFsrsStateRecord = {
+	created: IsoAutoDateString
+	difficulty?: number
+	id: string
+	lapses?: number
+	last_reviewed_at?: IsoDateString
+	stability?: number
+	state?: UserCardFsrsStateStateOptions
+	updated: IsoAutoDateString
+	user_card_id?: RecordIdString
+}
+
+export type UserCardsRecord = {
+	card_id?: RecordIdString
+	created: IsoAutoDateString
+	deck_id?: RecordIdString
+	due_at?: IsoDateString
+	id: string
+	suspended?: boolean
+	updated: IsoAutoDateString
+	user_id?: RecordIdString
+}
+
+export type UserReviewsRecord = {
+	id: string
+	new_difficulty?: number
+	new_due_at?: IsoDateString
+	new_stability?: number
+	previous_difficulty?: number
+	previous_due_at?: IsoDateString
+	previous_stability?: number
+	rating?: number
+	reviewed_at: IsoAutoDateString
+	user_card_id?: RecordIdString
 }
 
 export type UsersRecord = {
@@ -156,8 +212,12 @@ export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemF
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type CardsResponse<Texpand = unknown> = Required<CardsRecord> & BaseSystemFields<Texpand>
 export type DecksResponse<TplayData = unknown, Texpand = unknown> = Required<DecksRecord<TplayData>> & BaseSystemFields<Texpand>
+export type FsrsParameterSetsResponse<Tweigths_json = unknown, Texpand = unknown> = Required<FsrsParameterSetsRecord<Tweigths_json>> & BaseSystemFields<Texpand>
 export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
 export type RoomsUserInfoResponse<Texpand = unknown> = Required<RoomsUserInfoRecord> & BaseSystemFields<Texpand>
+export type UserCardFsrsStateResponse<Texpand = unknown> = Required<UserCardFsrsStateRecord> & BaseSystemFields<Texpand>
+export type UserCardsResponse<Texpand = unknown> = Required<UserCardsRecord> & BaseSystemFields<Texpand>
+export type UserReviewsResponse<Texpand = unknown> = Required<UserReviewsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -170,8 +230,12 @@ export type CollectionRecords = {
 	_superusers: SuperusersRecord
 	cards: CardsRecord
 	decks: DecksRecord
+	fsrs_parameter_sets: FsrsParameterSetsRecord
 	rooms: RoomsRecord
 	rooms_user_info: RoomsUserInfoRecord
+	user_card_fsrs_state: UserCardFsrsStateRecord
+	user_cards: UserCardsRecord
+	user_reviews: UserReviewsRecord
 	users: UsersRecord
 }
 
@@ -183,8 +247,12 @@ export type CollectionResponses = {
 	_superusers: SuperusersResponse
 	cards: CardsResponse
 	decks: DecksResponse
+	fsrs_parameter_sets: FsrsParameterSetsResponse
 	rooms: RoomsResponse
 	rooms_user_info: RoomsUserInfoResponse
+	user_card_fsrs_state: UserCardFsrsStateResponse
+	user_cards: UserCardsResponse
+	user_reviews: UserReviewsResponse
 	users: UsersResponse
 }
 
