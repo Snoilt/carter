@@ -38,6 +38,8 @@
 
 ## Agent-Specific Instructions
 - Keep changes minimal and aligned with existing structure. Prefer `rg` for code search. Avoid broad refactors without discussion.
+- Closely follow the latest PocketBase Go extension docs. Prefer APIs/patterns from https://pocketbase.io/docs/go-overview/ and avoid using undocumented/removed packages. Verify compatibility with the module version in `database/go.mod` before introducing new imports.
+- Target PocketBase version: v0.35.x (current latest). Use only APIs available in this version and verify compatibility with the dependency declared in `database/go.mod`.
 
 
 

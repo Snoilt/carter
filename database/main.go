@@ -13,6 +13,7 @@ func main() {
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		routes.Review(se)
+		routes.Next(se)
 		return se.Next()
 	})
 

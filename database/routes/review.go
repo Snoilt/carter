@@ -1,161 +1,19 @@
 package routes
 
 import (
-	"math"
 	"net/http"
 	"time"
 
+	"database/internal/fsrs"
+
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
-	"github.com/pocketbase/pocketbase/tools/types"
-)
-
-var WEIGHTS = []float64{
-	0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367,
-	1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755,
-}
-
-const (
-	DECAY             = -0.5
-	FACTOR            = 19.0 / 81.0
-	RELEARN_MINUTES   = 10
-	REQUEST_RETENTION = 0.9
-
-	StateNew        = "new"
-	StateRelearning = "relearning"
-	StateReview     = "review"
 )
 
 type ReviewRequest struct {
 	UserCardId string `json:"userCardId"`
 	Rating     int    `json:"rating"`
 	AttemptId  string `json:"attemptId"`
-}
-
-// FSRSState represents the current FSRS state for a card
-type FSRSState struct {
-	Stability      float64
-	Difficulty     float64
-	Lapses         int
-	State          string
-	LastReviewedAt types.DateTime
-}
-
-// FSRSResult represents the calculated new FSRS values after a review
-type FSRSResult struct {
-	Stability  float64
-	Difficulty float64
-	Lapses     int
-	State      string
-	DueAt      types.DateTime
-}
-
-// calculateFSRS computes the new FSRS values based on current state and rating
-func calculateFSRS(current FSRSState, rating int, now time.Time) FSRSResult {
-	isFirst := current.LastReviewedAt.IsZero() ||
-		current.State == StateNew ||
-		current.Stability <= 0 ||
-		current.Difficulty <= 0
-
-	var daysSinceReview float64
-	if !current.LastReviewedAt.IsZero() {
-		daysSinceReview = now.Sub(current.LastReviewedAt.Time()).Hours() / 24
-	}
-
-	currentRetrievability := retrievability(daysSinceReview, current.Stability)
-
-	result := FSRSResult{
-		Stability:  current.Stability,
-		Difficulty: current.Difficulty,
-		Lapses:     current.Lapses,
-		State:      current.State,
-	}
-
-	if isFirst {
-		result.Stability = initialStability(rating)
-		result.Difficulty = initialDifficulty(rating)
-	} else {
-		result.Difficulty = nextDifficulty(current.Difficulty, rating)
-		if rating > 1 {
-			result.Stability = stabilityAfterRecall(current.Stability, result.Difficulty, currentRetrievability, rating)
-		} else {
-			result.Stability = stabilityAfterForget(current.Stability, result.Difficulty, currentRetrievability)
-		}
-	}
-
-	if rating == 1 {
-		result.Lapses = current.Lapses + 1
-		result.State = StateRelearning
-		result.DueAt, _ = types.ParseDateTime(now.Add(time.Duration(RELEARN_MINUTES) * time.Minute))
-	} else {
-		result.State = StateReview
-		result.DueAt, _ = types.ParseDateTime(now.AddDate(0, 0, nextIntervalDays(result.Stability)))
-	}
-
-	return result
-}
-
-func clamp(value, min, max float64) float64 {
-	return math.Max(min, math.Min(max, value))
-}
-
-func retrievability(daysSinceReview, stability float64) float64 {
-	if stability <= 0 || daysSinceReview <= 0 {
-		return 1
-	}
-	return math.Pow(1+FACTOR*(daysSinceReview/stability), DECAY)
-}
-
-func initialStability(rating int) float64 {
-	return WEIGHTS[rating-1]
-}
-
-func initialDifficulty(rating int) float64 {
-	return clamp(WEIGHTS[4]-float64(rating-3)*WEIGHTS[5], 1, 10)
-}
-
-func nextDifficulty(currentDifficulty float64, rating int) float64 {
-	initialDifficultyWeight := WEIGHTS[4]
-	adjustedDifficulty := currentDifficulty - WEIGHTS[6]*float64(rating-3)
-	newDifficulty := WEIGHTS[7]*initialDifficultyWeight + (1-WEIGHTS[7])*adjustedDifficulty
-	return clamp(newDifficulty, 1, 10)
-}
-
-func nextIntervalDays(stability float64) int {
-	if stability <= 0 {
-		return 1
-	}
-	interval := (stability / FACTOR) * (math.Pow(REQUEST_RETENTION, 1/DECAY) - 1)
-	return int(math.Max(1, math.Round(interval)))
-}
-
-func stabilityAfterRecall(stability, difficulty, retrievability float64, rating int) float64 {
-	hardMultiplier := 1.0
-	easyMultiplier := 1.0
-	if rating == 2 {
-		hardMultiplier = WEIGHTS[15]
-	}
-	if rating == 4 {
-		easyMultiplier = WEIGHTS[16]
-	}
-
-	base := math.Exp(WEIGHTS[8]) *
-		(11 - difficulty) *
-		math.Pow(stability, -WEIGHTS[9]) *
-		(math.Exp(WEIGHTS[10]*(1-retrievability)) - 1) *
-		hardMultiplier *
-		easyMultiplier
-
-	newStability := stability * (base + 1)
-	return math.Max(newStability, stability)
-}
-
-func stabilityAfterForget(stability, difficulty, retrievability float64) float64 {
-	newStability := WEIGHTS[11] *
-		math.Pow(difficulty, -WEIGHTS[12]) *
-		(math.Pow(stability+1, WEIGHTS[13]) - 1) *
-		math.Exp(WEIGHTS[14]*(1-retrievability))
-	return math.Max(0.01, newStability)
 }
 
 func fetchOrCreateFSRSState(app core.App, userCardId string) (*core.Record, bool, error) {
@@ -174,7 +32,7 @@ func fetchOrCreateFSRSState(app core.App, userCardId string) (*core.Record, bool
 	newRecord.Set("stability", 0)
 	newRecord.Set("difficulty", 0)
 	newRecord.Set("lapses", 0)
-	newRecord.Set("state", StateNew)
+	newRecord.Set("state", fsrs.StateNew)
 
 	if err := app.Save(newRecord); err != nil {
 		return nil, false, err
@@ -182,6 +40,8 @@ func fetchOrCreateFSRSState(app core.App, userCardId string) (*core.Record, bool
 
 	return newRecord, true, nil
 }
+
+// transactional variant omitted for compatibility with current PocketBase version
 
 func Review(se *core.ServeEvent) {
 
@@ -209,12 +69,15 @@ func Review(se *core.ServeEvent) {
 			return e.JSON(http.StatusForbidden, "You don't have access to this usercardId.")
 		}
 
+		// Perform FSRS update + review log + due date update (best-effort without transaction)
+		now := time.Now()
+
 		userCardFSRSState, _, err := fetchOrCreateFSRSState(se.App, userCardId)
 		if err != nil {
 			return e.JSON(http.StatusInternalServerError, "Couldn't fetch FSRS state")
 		}
 
-		currentState := FSRSState{
+		currentState := fsrs.FSRSState{
 			Stability:      userCardFSRSState.GetFloat("stability"),
 			Difficulty:     userCardFSRSState.GetFloat("difficulty"),
 			Lapses:         userCardFSRSState.GetInt("lapses"),
@@ -222,9 +85,7 @@ func Review(se *core.ServeEvent) {
 			LastReviewedAt: userCardFSRSState.GetDateTime("last_reviewed_at"),
 		}
 
-		now := time.Now()
-
-		result := calculateFSRS(currentState, rating, now)
+		result := fsrs.Calculate(currentState, rating, now)
 
 		// Persist FSRS state
 		userCardFSRSState.Set("stability", result.Stability)
