@@ -5,9 +5,9 @@ const review = async () => {
 			await pb.send("/api/learn/review", {
 				method: "POST",
 				body: JSON.stringify({
-					usercardId: "dcsfzgeel4ym54x",
-					rating: 1,
-					attemptId: "testattemptid7",
+					userCardId: "dcsfzgeel4ym54x",
+					rating: 4,
+					attemptId: "testattemptid20",
 				}),
 			}),
 		)
@@ -27,11 +27,23 @@ const nextCard = async () => {
 		console.error("Failed to review card:", error)
 	}
 }
+
+const goEndPoint = async () => {
+	try {
+		const response = await pb.send(`/api/learn/review`, {
+			method: "GET",
+		})
+		console.log(response)
+	} catch (error) {
+		console.error("Failed to review card:", error)
+	}
+}
 </script>
 
 <template>
 	<div>
 		<UButton @click="review">Test review endpoint</UButton>
 		<UButton @click="nextCard">Test next Card endpoint</UButton>
+		<UButton @click="goEndPoint">Test review GET endpoint</UButton>
 	</div>
 </template>

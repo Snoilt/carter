@@ -109,25 +109,25 @@ export type CardsRecord = {
 	updated: IsoAutoDateString
 }
 
-export type DecksRecord<TplayData = unknown> = {
+export type DecksRecord = {
 	created: IsoAutoDateString
 	creator?: RecordIdString
 	description?: string
 	id: string
 	name?: string
-	playData?: null | TplayData
 	roomId: RecordIdString
 	updated: IsoAutoDateString
 }
 
-export type FsrsParameterSetsRecord<Tweigths_json = unknown> = {
+export type FsrsParameterSetsRecord<Tweights_json = unknown> = {
 	created: IsoAutoDateString
 	deck_id?: RecordIdString
 	desired_retention?: number
 	id: string
+	max_tage?: number
 	updated: IsoAutoDateString
 	user_id?: RecordIdString
-	weigths_json?: null | Tweigths_json
+	weights_json?: null | Tweights_json
 }
 
 export type RoomsRecord = {
@@ -179,6 +179,7 @@ export type UserCardsRecord = {
 }
 
 export type UserReviewsRecord = {
+	attempt_id: string
 	id: string
 	new_difficulty?: number
 	new_due_at?: IsoDateString
@@ -211,8 +212,8 @@ export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemF
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type CardsResponse<Texpand = unknown> = Required<CardsRecord> & BaseSystemFields<Texpand>
-export type DecksResponse<TplayData = unknown, Texpand = unknown> = Required<DecksRecord<TplayData>> & BaseSystemFields<Texpand>
-export type FsrsParameterSetsResponse<Tweigths_json = unknown, Texpand = unknown> = Required<FsrsParameterSetsRecord<Tweigths_json>> & BaseSystemFields<Texpand>
+export type DecksResponse<Texpand = unknown> = Required<DecksRecord> & BaseSystemFields<Texpand>
+export type FsrsParameterSetsResponse<Tweights_json = unknown, Texpand = unknown> = Required<FsrsParameterSetsRecord<Tweights_json>> & BaseSystemFields<Texpand>
 export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
 export type RoomsUserInfoResponse<Texpand = unknown> = Required<RoomsUserInfoRecord> & BaseSystemFields<Texpand>
 export type UserCardFsrsStateResponse<Texpand = unknown> = Required<UserCardFsrsStateRecord> & BaseSystemFields<Texpand>

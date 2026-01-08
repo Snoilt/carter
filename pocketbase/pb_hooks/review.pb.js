@@ -1,27 +1,24 @@
-/// <reference path="../pb_data/types.d.ts" />
+/* eslint-disable no-undef */
+/* eslint-disable unicorn/consistent-function-scoping */
+// import { $app, $apis, Record, routerAdd } from "../pb_utils"
 
 routerAdd(
 	"POST",
 	"/api/learn/review",
-	(e) => {
-		if (!e.auth) throw new UnauthorizedError("Authentication required.")
+	(event) => {
+		if (!event.auth) throw new Error("Authentication required.")
 
-		const userId = e.auth.id
+		const userId = event.auth.id
 		const now = new Date().toISOString()
 
-		// Read body in the most robust PB way
-		const body = e.requestInfo().body || {}
-		const userCardId = (
-			(body.usercardId || body.usercardID || body.user_card_id || "") + ""
-		).trim()
-		const rating = parseInt(body.rating, 10)
-		const attemptId = (
-			(body.attemptid || body.attemptId || body.attempt_id || "") + ""
-		).trim()
+		const body = event.requestInfo().body || {}
+		const userCardId = body.userCardId
+		const rating = Number.parseInt(body.rating, 10)
+		const attemptId = body.attemptId
 
-		if (!userCardId) throw new BadRequestError("Missing usercardId.")
-		if (!attemptId) throw new BadRequestError("Missing attemptid.")
-		if (!(rating >= 1 && rating <= 4)) throw new BadRequestError("rating must be 1..4.")
+		if (!userCardId) throw new Error("Missing userCardId.")
+		if (!attemptId) throw new Error("Missing attemptId.")
+		if (!(rating >= 1 && rating <= 4)) throw new Error("rating must be 1..4.")
 
 		// ---- FSRS 4.5 default parameters (17) ----
 		const W = [
@@ -37,18 +34,21 @@ routerAdd(
 		const REQUEST_RETENTION = 0.9
 
 		function clamp(x, lo, hi) {
-			return x < lo ? lo : x > hi ? hi : x
+			return x < lo ? lo : Math.min(x, hi)
 		}
+
 		function addMinutesISO(iso, minutes) {
 			const d = new Date(iso)
 			d.setTime(d.getTime() + minutes * 60 * 1000)
 			return d.toISOString()
 		}
+
 		function addDaysISO(iso, days) {
 			const d = new Date(iso)
 			d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000)
 			return d.toISOString()
 		}
+
 		function diffDays(fromIso, toIso) {
 			const a = new Date(fromIso).getTime()
 			const b = new Date(toIso).getTime()
@@ -59,19 +59,21 @@ routerAdd(
 		function initialStability(G) {
 			return W[G - 1]
 		}
+
 		function initialDifficulty(G) {
 			return clamp(W[4] - (G - 3) * W[5], 1, 10)
 		}
+
 		function nextDifficulty(D, G) {
 			const D03 = W[4]
-			const temp = D - W[6] * (G - 3)
-			const d = W[7] * D03 + (1 - W[7]) * temp
+			const temporary = D - W[6] * (G - 3)
+			const d = W[7] * D03 + (1 - W[7]) * temporary
 			return clamp(d, 1, 10)
 		}
 
 		function retrievability(tDays, S) {
-			if (!S || S <= 0) return 1.0
-			if (!tDays || tDays <= 0) return 1.0
+			if (!S || S <= 0) return 1
+			if (!tDays || tDays <= 0) return 1
 			return Math.pow(1 + FACTOR * (tDays / S), DECAY)
 		}
 
@@ -107,52 +109,55 @@ routerAdd(
 		}
 
 		// ---- idempotency fast-path (outside tx) ----
-		try {
-			const existing = $app.findFirstRecordByFilter(
-				"user_reviews",
-				"attempt_id = {:aid}",
-				{ aid: attemptId },
-			)
-			return e.json(200, {
-				idempotent: true,
-				reviewLogId: existing.id,
-			})
-		} catch (_) {
-			// not found -> continue
-		}
+		// try {
+		// 	const existing = $app.findFirstRecordByFilter(
+		// 		"user_reviews",
+		// 		"attempt_id = {:aid}",
+		// 		{ aid: attemptId },
+		// 	)
+		// 	return event.json(200, {
+		// 		idempotent: true,
+		// 		reviewLogId: existing.id,
+		// 	})
+		// } catch {
+		// 	console.log("no existing review found")
+		// 	// not found -> continue
+		// }
 
-		let out = null
+		let out = {}
 
 		$app.runInTransaction((txApp) => {
 			// Re-check idempotency inside tx (race safe)
-			try {
-				const existing = txApp.findFirstRecordByFilter(
-					"user_reviews",
-					"attempt_id = {:aid}",
-					{ aid: attemptId },
-				)
-				out = { idempotent: true, reviewLogId: existing.id }
-				return
-			} catch (_) {}
+			// try {
+			// 	const existing = txApp.findFirstRecordByFilter(
+			// 		"user_reviews",
+			// 		"attempt_id = {:aid}",
+			// 		{ aid: attemptId },
+			// 	)
+			// 	out = { idempotent: true, reviewLogId: existing.id }
+			// 	return
+			// } catch {
+			// 	// not found -> continue
+			// }
 
 			const userCard = txApp.findRecordById("user_cards", userCardId)
 
 			// Ownership check (server bypasses rules)
 			if (userCard.getString("user_id") !== userId) {
-				throw new ForbiddenError("You don't have access to this usercardId.")
+				throw new Error("You don't have access to this usercardId.")
 			}
 
-			const prevDueAt = userCard.get("due_at") || null
+			const previousDueAt = userCard.get("due_at")
 
 			// Load or create fsrs state
-			let st = null
+			let st = {}
 			try {
 				st = txApp.findFirstRecordByFilter(
 					"user_card_fsrs_state",
 					"user_card_id = {:ucId}",
 					{ ucId: userCardId },
 				)
-			} catch (_) {
+			} catch {
 				const stCol = txApp.findCollectionByNameOrId("user_card_fsrs_state")
 				st = new Record(stCol)
 				st.set("user_card_id", userCardId)
@@ -163,29 +168,30 @@ routerAdd(
 				txApp.save(st)
 			}
 
-			const prevS = parseFloat(st.get("stability") || 0)
-			const prevD = parseFloat(st.get("difficulty") || 0)
-			const prevL = parseInt(st.get("lapses") || 0, 10)
-			const prevState = (st.get("state") || "new") + ""
-			const prevLast = st.get("last_reviewed_at") || null
+			const previousS = Number.parseFloat(st.get("stability") || 0)
+			const previousD = Number.parseFloat(st.get("difficulty") || 0)
+			const previousL = Number.parseInt(st.get("lapses") || 0, 10)
+			const previousState = (st.get("state") || "new") + ""
+			const previousLast = st.get("last_reviewed_at")
 
-			const tDays = prevLast ? diffDays(prevLast, now) : 0
-			const R = retrievability(tDays, prevS)
+			const tDays = previousLast ? diffDays(previousLast, now) : 0
+			const R = retrievability(tDays, previousS)
 
-			const isFirst = !prevLast || prevState === "new" || prevS <= 0 || prevD <= 0
+			const isFirst =
+				!previousLast || previousState === "new" || previousS <= 0 || previousD <= 0
 
-			let newS = prevS
-			let newD = prevD
-			let newL = prevL
-			let newState = prevState
-			let newDueAt = prevDueAt
+			let newS = previousS
+			let newD = previousD
+			let newL = previousL
+			let newState = previousState
+			let newDueAt = previousDueAt
 
 			if (isFirst) {
 				newS = initialStability(rating)
 				newD = initialDifficulty(rating)
 
 				if (rating === 1) {
-					newL = prevL + 1
+					newL = previousL + 1
 					newState = "relearning"
 					newDueAt = addMinutesISO(now, RELEARN_MINUTES)
 				} else {
@@ -193,15 +199,15 @@ routerAdd(
 					newDueAt = addDaysISO(now, nextIntervalDays(newS))
 				}
 			} else {
-				newD = nextDifficulty(prevD, rating)
+				newD = nextDifficulty(previousD, rating)
 
 				if (rating === 1) {
-					newL = prevL + 1
-					newS = stabilityAfterForget(prevS, newD, R)
+					newL = previousL + 1
+					newS = stabilityAfterForget(previousS, newD, R)
 					newState = "relearning"
 					newDueAt = addMinutesISO(now, RELEARN_MINUTES)
 				} else {
-					newS = stabilityAfterRecall(prevS, newD, R, rating)
+					newS = stabilityAfterRecall(previousS, newD, R, rating)
 					newState = "review"
 					newDueAt = addDaysISO(now, nextIntervalDays(newS))
 				}
@@ -228,11 +234,11 @@ routerAdd(
 			rv.set("attempt_id", attemptId)
 			rv.set("reviewed_at", now)
 
-			rv.set("previous_due_at", prevDueAt)
+			rv.set("previous_due_at", previousDueAt)
 			rv.set("new_due_at", newDueAt)
-			rv.set("previous_stability", prevS)
+			rv.set("previous_stability", previousS)
 			rv.set("new_stability", newS)
-			rv.set("previous_difficulty", prevD)
+			rv.set("previous_difficulty", previousD)
 			rv.set("new_difficulty", newD)
 
 			txApp.save(rv)
@@ -255,10 +261,10 @@ routerAdd(
 		})
 
 		if (!out) {
-			throw new InternalServerError("Review transaction finished without a result.")
+			throw new Error("Review transaction finished without a result.")
 		}
 
-		return e.json(200, out)
+		return event.json(200, out)
 	},
 	$apis.requireAuth(),
 )

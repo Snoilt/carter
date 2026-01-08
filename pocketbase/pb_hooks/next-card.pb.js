@@ -4,7 +4,7 @@ routerAdd(
 	"GET",
 	"/api/learn/next/{id}",
 	(e) => {
-		if (!e.auth) throw new UnauthorizedError("Authentication required.")
+		if (!e.auth) throw new Error("Authentication required.")
 
 		const deckId = e.request.pathValue("id")
 		const userId = e.auth.id
