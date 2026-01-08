@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CardsRecord } from "~/types/pb"
 
-const router = useRouter()
+// const router = useRouter()
 const cards = ref<CardsRecord[]>([])
 
 // ----------------------------------------------------------------------------
@@ -28,15 +28,9 @@ defineShortcuts({
 
 // ----------------------------------------------------------------------------
 
-const fetchCards = async () => {
-	try {
-		cards.value = await pb
-			.collection("cards")
-			.getFullList({ filter: `deck = "${router.currentRoute.value.params.deck}"` })
-	} catch (error) {
-		console.error("Failed to fetch cards:", error)
-	}
-}
+const fetchCards = async () => {}
+
+console.log(fetchCards())
 
 // ----------------------------------------------------------------------------
 
@@ -78,8 +72,12 @@ onMounted(() => {
 				</div>
 			</div>
 
-			<p class="text-center mt-6 text-gray-400 text-sm">
-				Press <kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">Space</kbd>
+			<p class="space-x-2 text-center mt-6 text-gray-400 text-sm">
+				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">1 Again</kbd>
+				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">2 Hard</kbd>
+				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">3 Good</kbd>
+				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">4 Easy</kbd>
+				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">Space</kbd>
 				{{ showAnswer ? "for next card" : "to reveal answer" }}
 			</p>
 		</div>

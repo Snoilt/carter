@@ -1,13 +1,16 @@
 <script setup lang="ts">
 const review = async () => {
 	try {
-		await pb.send("/api/card/review", {
-			method: "POST",
-			body: JSON.stringify({
-				cardId: "example card id",
-				rating: 3,
+		console.log(
+			await pb.send("/api/learn/review", {
+				method: "POST",
+				body: JSON.stringify({
+					userCardId: "dcsfzgeel4ym54x",
+					rating: 4,
+					attemptId: "testattemptid21",
+				}),
 			}),
-		})
+		)
 	} catch (error) {
 		console.error("Failed to review card:", error)
 	}
@@ -16,9 +19,21 @@ const review = async () => {
 //DECK ID AUSFÜLLEN FÜR TESTEN
 const nextCard = async () => {
 	try {
-		await pb.send("/api/card/next/{enter deck id here}", {
+		const response = await pb.send(`/api/learn/next/wgq3p3dgkri7e97`, {
 			method: "GET",
 		})
+		console.log(response)
+	} catch (error) {
+		console.error("Failed to review card:", error)
+	}
+}
+
+const goEndPoint = async () => {
+	try {
+		const response = await pb.send(`/api/learn/review`, {
+			method: "GET",
+		})
+		console.log(response)
 	} catch (error) {
 		console.error("Failed to review card:", error)
 	}
@@ -29,5 +44,6 @@ const nextCard = async () => {
 	<div>
 		<UButton @click="review">Test review endpoint</UButton>
 		<UButton @click="nextCard">Test next Card endpoint</UButton>
+		<UButton @click="goEndPoint">Test review GET endpoint</UButton>
 	</div>
 </template>
