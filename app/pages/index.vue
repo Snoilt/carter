@@ -47,9 +47,9 @@ definePageMeta({
               </div>
 
               <p class="mt-4 max-w-2xl text-base leading-relaxed text-gray-700 dark:text-purpleish-100/80 md:text-lg">
-                Kardr ist Karteikarten-Lernen — aber mit Motivation:
-                Du trittst gegen Mitschüler:innen & Kommiliton:innen an, sammelst XP
-                und siehst deinen Fortschritt sofort.
+                Kardr ist Karteikarten-Lernen – aber motivierend:
+                Tritt gegen Mitschüler:innen und Kommiliton:innen an, sammle XP
+                und verfolge deinen Fortschritt in Echtzeit.
               </p>
 
               <div class="mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-700 dark:text-purpleish-100/80">
