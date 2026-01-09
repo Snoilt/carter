@@ -1,16 +1,16 @@
 <template>
   <div class="space-y-4">
     <div
-      v-for="(item, i) in items"
-      :key="i"
+      v-for="(item, index) in items"
+      :key="index"
       class="border border-white/10 rounded-xl bg-white/5"
     >
       <button
-        @click="toggle(i)"
+        @click="toggle(index)"
         class="flex w-full items-center justify-between px-4 py-3 text-left font-semibold text-purpleish-100 hover:bg-white/10"
       >
-        <span>{{ item.q }}</span>
-        <span class="text-xl" v-if="openIndex === i">−</span>
+        <span>{{ item.label }}</span>
+        <span class="text-xl" v-if="openIndex === index">−</span>
         <span class="text-xl" v-else>+</span>
       </button>
 
@@ -19,10 +19,10 @@
         leave-active-class="transition ease-in duration-200"
       >
         <p
-          v-if="openIndex === i"
+          v-if="openIndex === index"
           class="px-4 pb-4 text-sm text-purpleish-100/80"
         >
-          {{ item.a }}
+          {{ item.content }}
         </p>
       </transition>
     </div>
@@ -31,10 +31,10 @@
 
 <script setup>
 import { ref } from "vue";
-const props = defineProps({ items: Array });
-const openIndex = ref(null);
+const _props = defineProps({ items: Array });
+const openIndex = ref(undefined);
 
-function toggle(i) {
-  openIndex.value = openIndex.value === i ? null : i;
+function toggle(index) {
+  openIndex.value = openIndex.value === index ? undefined : index;
 }
 </script>

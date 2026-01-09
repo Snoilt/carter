@@ -2,6 +2,11 @@
 @import "@nuxt/ui";
 /*jsds@gm.de
 asdasdasd*/
+
+:root {
+	--font-family: "Jetbrains Mono", sans-serif;
+	
+}
 @theme static {
 	--font-sans: "Jetbrains Mono", sans-serif;
 
@@ -40,4 +45,9 @@ asdasdasd*/
 	--color-dollepink-800: oklch(0.373 0.079 328.88);
 	--color-dollepink-900: oklch(0.292 0.061 328.28);
 	--color-dollepink-950: oklch(0.253 0.054 328.54);
+
+	--color-primary: var(--color-purpleish-500);
+	--color-background: var(--bg);
+	--color-text: var(--text);
 }
+
