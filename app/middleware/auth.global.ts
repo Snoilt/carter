@@ -4,7 +4,13 @@ export default defineNuxtRouteMiddleware((to) => {
 	const isLoggedIn = pb.authStore.isValid
 
 	// Public routes that don't require authentication
-	const publicRoutes = new Set(["/auth/login", "/auth/register", "/", "/impressum", "/datenschutz"])
+	const publicRoutes = new Set([
+		"/auth/login",
+		"/auth/register",
+		"/",
+		"/impressum",
+		"/datenschutz",
+	])
 
 	// Redirect to dashboard if logged-in user tries to access login/register
 	if (isLoggedIn && publicRoutes.has(to.path)) {
