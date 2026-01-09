@@ -1,18 +1,37 @@
+<script setup lang="ts">
+import { definePageMeta } from "#imports"
+
+definePageMeta({
+	title: "Kardr — Flashcards als Duell",
+	meta: [
+		{
+			name: "description",
+			content:
+				"Kardr macht Karteikarten-Lernen motivierend: Duelle, Decks teilen, Streaks und Team-Features mit Gamification.",
+		},
+	],
+})
+</script>
+
 <template>
-	<MaxContainer>
-		<UCard class="m-auto w-full max-w-md p-6" variant="subtle">
-			<div class="grid mx-auto space-y-6">
-				<div>
-					<h1 class="text-3xl font-bold text-center">Welcome to Carter</h1>
-					<p class="text-center">Your Ultimate Flashcard experience</p>
-				</div>
-				<div class="flex justify-center items-center space-x-4">
-					<NuxtLink to="/auth/login">
-						<UButton class="flex-none">Let me Play!</UButton>
-					</NuxtLink>
-					<UButton variant="outline" class="flex-none">What is Carter?</UButton>
-				</div>
-			</div>
-		</UCard>
-	</MaxContainer>
+	<div
+		class="relative isolate min-h-svh overflow-hidden bg-white text-black dark:bg-randoblue-950 dark:text-purpleish-50"
+	>
+		<!-- BACKGROUND (vue-bits) -->
+		<HomeBackground />
+
+		<MaxContainer class="relative z-10">
+			<main class="pb-16">
+				<!-- HERO -->
+				<HomeHero class="mt-14" />
+
+				<!-- FEATURES -->
+				<HomeFeatures class="mt-14" />
+
+				<HomeFaq class="mt-14" />
+				<HomeTeam class="mt-14" />
+				<HomeFooter class="mt-14" />
+			</main>
+		</MaxContainer>
+	</div>
 </template>
