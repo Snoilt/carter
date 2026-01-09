@@ -1,30 +1,30 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `app/` Nuxt 4 client: pages, components, composables, middleware, assets.
+- `src/` Angular client: pages, components, services, shared UI, styles, assets.
 - `database/` Go service extending PocketBase (custom routes).
 - `pocketbase/` binary + `pb_hooks/` and `pb_migrations/`.
-- `public/` static assets; `nuxt.config.ts`, `eslint.config.mjs`, `tsconfig.json` at root.
+- `src/assets/` static assets; `angular.json`, `eslint.config.mjs`, `tsconfig.json` at root.
 
 ## Build, Test, and Development Commands
 - Install deps: `bun install` (preferred) or `npm install`.
-- Frontend dev: `bun run dev` — start Nuxt at localhost.
+- Frontend dev: `bun run start` — start Angular dev server at localhost.
 - Frontend build: `bun run build` / preview: `bun run preview`.
 - Lint: `bun run lint` (ESLint) — Format: `bun run format` (Prettier).
-- PocketBase local typegen: `bun run pb:local:typegen` (prompts for email/password; writes `app/types/pb.d.ts`).
+- PocketBase local typegen: `bun run pb:local:typegen` (prompts for email/password; writes `src/app/types/pb.d.ts`).
 - PocketBase server: `./pocketbase/pocketbase serve` (apply `pb_migrations` and load hooks).
 - Go service (optional standalone): `cd database && go run .`.
 
 ## Coding Style & Naming Conventions
-- TypeScript, Vue SFCs, 2‑space indent. Run Prettier before committing.
-- ESLint with Nuxt + `eslint-plugin-unicorn`; keep rules green.
-- Components/files: kebab-case filenames (e.g., `card/editor.vue`), PascalCase in templates.
-- Composables: `app/composables/` with `use-` prefix (e.g., `use-user.ts`).
-- Pages use directory routing under `app/pages/` (e.g., `app/pages/room/[room]/index.vue`).
+- TypeScript, Angular components, 2‑space indent. Run Prettier before committing.
+- ESLint with TypeScript + `eslint-plugin-unicorn`; keep rules green.
+- Components/files: kebab-case filenames (e.g., `card/editor.component.ts`), PascalCase in templates.
+- Shared services live under `src/app/core/services/`.
+- Pages live under `src/app/pages/` and are wired in `src/app/app.routes.ts`.
 
 ## Testing Guidelines
 - No formal suite yet. If adding tests:
-  - Frontend: `*.spec.ts` near source or under `app/**/__tests__/`; run with Vitest.
+- Frontend: `*.spec.ts` near source; run with Angular tooling when added.
   - Go: `*_test.go`; run `go test ./...`.
   - Aim for coverage on routes, composables, and critical UI states.
 
@@ -33,7 +33,7 @@
 - PRs include: clear description, linked issues, screenshots for UI, test notes, and migration notes (if touching PocketBase).
 
 ## Security & Configuration Tips
-- Do not commit secrets. Store PocketBase creds locally; use `.env` for Nuxt runtime config if needed.
+- Do not commit secrets. Store PocketBase creds locally; use `.env` if needed.
 - Migrations live in `pocketbase/pb_migrations/`; hooks in `pocketbase/pb_hooks/`. Validate on a local DB before PR.
 
 ## Agent-Specific Instructions

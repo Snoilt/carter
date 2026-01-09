@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "JetBrains Mono", sans-serif;
+  --header-height: 4rem;
+
+  --color-purpleish-50: hsl(235.7 77.8% 96.5%);
+  --color-purpleish-100: hsl(237.5 75% 93.7%);
+  --color-purpleish-200: hsl(236.5 73.9% 86.5%);
+  --color-purpleish-300: hsl(236.8 74.3% 80.2%);
+  --color-purpleish-400: hsl(236.5 73.9% 72.9%);
+  --color-purpleish-500: hsl(235.7 73.3% 66.3%);
+  --color-purpleish-600: hsl(234.5 71% 58%);
+  --color-purpleish-700: hsl(233.5 62.6% 46.1%);
+  --color-purpleish-800: hsl(233.3 65.6% 32%);
+  --color-purpleish-900: hsl(233.1 72.9% 18.8%);
+  --color-purpleish-950: hsl(233.9 80.3% 12%);
+
+  --color-randoblue-50: oklch(0.964 0.018 239.96);
+  --color-randoblue-100: oklch(0.929 0.035 234.79);
+  --color-randoblue-200: oklch(0.856 0.076 233.29);
+  --color-randoblue-300: oklch(0.785 0.123 228.25);
+  --color-randoblue-400: oklch(0.691 0.113 227.52);
+  --color-randoblue-500: oklch(0.596 0.098 228.2);
+  --color-randoblue-600: oklch(0.503 0.082 227.91);
+  --color-randoblue-700: oklch(0.419 0.069 227.38);
+  --color-randoblue-800: oklch(0.324 0.053 227.48);
+  --color-randoblue-900: oklch(0.23 0.038 229.37);
+  --color-randoblue-950: oklch(0.176 0.028 226.82);
+
+  --color-dollepink-50: oklch(0.959 0.015 325.83);
+  --color-dollepink-100: oklch(0.925 0.029 325.88);
+  --color-dollepink-200: oklch(0.851 0.06 327.02);
+  --color-dollepink-300: oklch(0.769 0.097 327.68);
+  --color-dollepink-400: oklch(0.696 0.132 328.3);
+  --color-dollepink-500: oklch(0.619 0.131 328.5);
+  --color-dollepink-600: oklch(0.539 0.116 328.2);
+  --color-dollepink-700: oklch(0.461 0.097 328.45);
+  --color-dollepink-800: oklch(0.373 0.079 328.88);
+  --color-dollepink-900: oklch(0.292 0.061 328.28);
+  --color-dollepink-950: oklch(0.253 0.054 328.54);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition;
+}
+
+.btn-primary {
+  @apply bg-indigo-500 text-white hover:bg-indigo-600;
+}
+
+.btn-outline {
+  @apply border border-slate-300 text-slate-700 hover:bg-slate-100;
+}
+
+.card {
+  @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+}
+
+.input {
+  @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200;
+}
+
+.section-title {
+  @apply text-xl font-bold text-slate-900;
+}

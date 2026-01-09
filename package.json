@@ -1,36 +1,46 @@
 {
-	"name": "nuxt-app",
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"build": "nuxt build",
-		"dev": "nuxt dev",
-		"format": "prettier -w .",
-		"generate": "nuxt generate",
-		"postinstall": "nuxt prepare",
-		"lint": "eslint .",
-		"preview": "nuxt preview",
-		"pb:local:typegen": "echo 'Enter pb email' && read email && echo 'enter pb password' && read password && bunx pocketbase-typegen --url http://localhost:8090 --email $email --password $password --out ./app/types/pb.d.ts"
-	},
-	"dependencies": {
-		"@faker-js/faker": "^10.1.0",
-		"@nuxt/eslint": "^1.12.1",
-		"@nuxt/icon": "2.0.0",
-		"@nuxt/ui": "^4.3.0",
-		"@nuxtjs/mdc": "0.19.2",
-		"dompurify": "^3.3.1",
-		"eslint": "^9.39.2",
-		"nuxt": "^4.2.2",
-		"ogl": "^1.0.11",
-		"pocketbase": "^0.26.5",
-		"typescript": "^5.9.3",
-		"vue": "^3.5.26",
-		"vue-router": "^4.6.4",
-		"zod": "^4.2.1"
-	},
-	"devDependencies": {
-		"eslint-plugin-unicorn": "^61.0.2",
-		"prettier": "^3.7.4",
-		"wrangler": "^4.54.0"
-	}
+  "name": "carter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "ng serve",
+    "dev": "ng serve",
+    "build": "ng build",
+    "preview": "ng serve --configuration production",
+    "format": "prettier -w .",
+    "lint": "eslint .",
+    "pb:local:typegen": "echo 'Enter pb email' && read email && echo 'enter pb password' && read password && bunx pocketbase-typegen --url http://localhost:8090 --email $email --password $password --out ./src/app/types/pb.d.ts"
+  },
+  "dependencies": {
+    "@angular/animations": "^18.2.0",
+    "@angular/common": "^18.2.0",
+    "@angular/compiler": "^18.2.0",
+    "@angular/core": "^18.2.0",
+    "@angular/forms": "^18.2.0",
+    "@angular/platform-browser": "^18.2.0",
+    "@angular/platform-browser-dynamic": "^18.2.0",
+    "@angular/router": "^18.2.0",
+    "@faker-js/faker": "^10.1.0",
+    "dompurify": "^3.3.1",
+    "marked": "^15.0.0",
+    "pocketbase": "^0.26.5",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.3",
+    "zone.js": "^0.14.7",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@angular/cli": "^18.2.0",
+    "@angular-devkit/build-angular": "^18.2.0",
+    "@angular/compiler-cli": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.2",
+    "eslint-plugin-unicorn": "^61.0.2",
+    "postcss": "^8.4.45",
+    "prettier": "^3.7.4",
+    "tailwindcss": "^3.4.13",
+    "wrangler": "^4.54.0"
+  }
 }

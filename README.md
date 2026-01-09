@@ -1,6 +1,6 @@
-# Nuxt Minimal Starter
+# Angular Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Look at the [Angular documentation](https://angular.dev/overview) to learn more.
 
 ## Setup
 
@@ -10,32 +10,20 @@ Make sure to install dependencies:
 # npm
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
 # bun
 bun install
 ```
 
 ## Development Server
 
-Start the development server on `http://localhost:3000`:
+Start the development server on `http://localhost:4200`:
 
 ```bash
 # npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
+npm run start
 
 # bun
-bun run dev
+bun run start
 ```
 
 ## Production
@@ -46,30 +34,15 @@ Build the application for production:
 # npm
 npm run build
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
 # bun
 bun run build
 ```
 
-Locally preview production build:
+Optionally serve the production build locally:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+# npm (after build)
+npx http-server dist
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Check out the [deployment documentation](https://angular.dev/tools/cli/deployment) for more information.
