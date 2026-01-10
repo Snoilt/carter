@@ -2,6 +2,7 @@
 import type { NavigationMenuItem } from "@nuxt/ui"
 
 const route = useRoute()
+const router = useRouter()
 const items = computed<NavigationMenuItem[]>(() => [
 	{
 		label: "Login",
@@ -23,7 +24,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 ])
 
 const goBack = () => {
-	history.back()
+	router.back()
 }
 </script>
 
