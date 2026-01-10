@@ -29,7 +29,7 @@ const showAnswer = ref(false)
 const errorMessage = ref<string | null>()
 
 const fetchNext = async () => {
-	errorMessage.value = null
+	errorMessage.value = undefined
 	loading.value = true
 	showAnswer.value = false
 	try {
@@ -42,9 +42,9 @@ const fetchNext = async () => {
 			userCardId.value = response.userCard?.id
 			fsrs.value = response.fsrs
 		} else {
-			card.value = null
-			userCardId.value = null
-			fsrs.value = null
+			card.value = undefined
+			userCardId.value = undefined
+			fsrs.value = undefined
 		}
 	} catch (error) {
 		errorMessage.value = `${error}`
