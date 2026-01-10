@@ -134,12 +134,6 @@ onMounted(() => {
 						</div>
 					</Transition>
 
-					<!-- in-flow controls removed; fixed controls rendered below -->
-
-					<div v-if="loading" class="text-center text-gray-400 text-sm mt-4">
-						Loading…
-					</div>
-
 					<div v-if="showStats" class="mt-6">
 						<PlayNerdstats :next-fsrs="nextPayload?.fsrs" :review="reviewPayload" />
 					</div>
@@ -170,7 +164,7 @@ onMounted(() => {
 .card-fade-leave-active {
 	transition:
 		opacity 100ms ease,
-		transform 200ms ease;
+		transform 100ms ease;
 }
 .card-fade-enter-from,
 .card-fade-leave-to {

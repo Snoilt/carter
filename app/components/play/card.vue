@@ -14,7 +14,11 @@ const props = defineProps<{
 
 		<div
 			class="border-t overflow-hidden transition-all duration-300 ease-in-out"
-			:class="props.showAnswer ? 'pt-6 max-h-250 opacity-100' : 'pt-0 max-h-0 opacity-0'"
+			:class="
+				props.showAnswer
+					? 'pt-6 max-h-250 opacity-100 border-gray-200 dark:border-gray-700'
+					: 'pt-0 max-h-0 opacity-0 border-transparent'
+			"
 		>
 			<h3 class="text-lg font-semibold text-gray-500 mb-2">Answer</h3>
 			<div class="text-xl">
