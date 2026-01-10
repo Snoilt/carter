@@ -1,85 +1,143 @@
 <script setup lang="ts">
-import type { CardsRecord } from "~/types/pb"
+import { useRoute } from "vue-router"
 
-// const router = useRouter()
-const cards = ref<CardsRecord[]>([])
+type NextResponse = {
+	type: "new" | "due" | "none"
+	deckId: string
+	now: string
+	userCard?: { id: string; dueAt: string | null }
+	card?: { id: string; question: string; solution: string; deck: string }
+	fsrs?: {
+		stability: number
+		difficulty: number
+		lapses: number
+		state: string
+		lastReviewedAt: string | null
+	}
+}
 
-// ----------------------------------------------------------------------------
+const route = useRoute()
+const deckId = computed(() => String(route.params.deck || ""))
 
-const currentIndex = ref(0)
+const loading = ref(true)
+const state = ref<NextResponse["type"] | null>()
+const card = ref<NextResponse["card"] | null>()
+const userCardId = ref<string | null>()
+const fsrs = ref<NextResponse["fsrs"] | null>()
+
 const showAnswer = ref(false)
-const currentCard = computed(() => cards.value[currentIndex.value])
-const isFinished = computed(() => currentIndex.value >= cards.value.length)
+const errorMessage = ref<string | null>()
+
+const fetchNext = async () => {
+	errorMessage.value = null
+	loading.value = true
+	showAnswer.value = false
+	try {
+		const response = (await pb.send(`/api/learn/next/${deckId.value}`, {
+			method: "GET",
+		})) as NextResponse
+		state.value = response.type
+		if (response.type === "new" || response.type === "due") {
+			card.value = response.card
+			userCardId.value = response.userCard?.id
+			fsrs.value = response.fsrs
+		} else {
+			card.value = null
+			userCardId.value = null
+			fsrs.value = null
+		}
+	} catch (error) {
+		errorMessage.value = `${error}`
+	} finally {
+		loading.value = false
+	}
+}
+
+const rate = async (rating: 1 | 2 | 3 | 4) => {
+	if (!userCardId.value) return
+	try {
+		await pb.send(`/api/learn/review`, {
+			method: "POST",
+			body: JSON.stringify({
+				userCardId: userCardId.value,
+				rating,
+				attemptId: crypto.randomUUID(),
+			}),
+		})
+		await fetchNext()
+	} catch (error) {
+		errorMessage.value = `${error}`
+	}
+}
 
 const handleSpacebar = () => {
-	if (isFinished.value) return
-
-	if (showAnswer.value) {
-		showAnswer.value = false
-		currentIndex.value++
-	} else {
-		showAnswer.value = true
-	}
+	if (loading.value || state.value === "none") return
+	showAnswer.value = !showAnswer.value
 }
 
 defineShortcuts({
 	" ": handleSpacebar,
+	"1": () => (showAnswer.value ? rate(1) : (showAnswer.value = true)),
+	"2": () => (showAnswer.value ? rate(2) : (showAnswer.value = true)),
+	"3": () => (showAnswer.value ? rate(3) : (showAnswer.value = true)),
+	"4": () => (showAnswer.value ? rate(4) : (showAnswer.value = true)),
 })
 
-// ----------------------------------------------------------------------------
-
-const fetchCards = async () => {}
-
-console.log(fetchCards())
-
-// ----------------------------------------------------------------------------
-
 onMounted(() => {
-	fetchCards()
+	fetchNext()
 })
 </script>
 
 <template>
 	<div class="flex flex-col items-center justify-center min-h-screen p-4">
-		<div v-if="cards.length === 0" class="text-center text-gray-500">
-			Loading cards...
-		</div>
+		<div v-if="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
 
-		<div v-else-if="isFinished" class="text-center">
-			<h2 class="text-2xl font-bold mb-4">🎉 You've finished all cards!</h2>
-			<p class="text-gray-500">{{ cards.length }} cards reviewed</p>
+		<div v-if="loading" class="text-center text-gray-500">Loading card...</div>
+
+		<div v-else-if="state === 'none'" class="text-center">
+			<h2 class="text-2xl font-bold mb-2">All caught up 🎉</h2>
+			<p class="text-gray-500">No new or due cards in this deck.</p>
 		</div>
 
 		<div v-else class="w-full max-w-2xl">
-			<div class="mb-4 text-center text-sm text-gray-500">
-				Card {{ currentIndex + 1 }} of {{ cards.length }}
-			</div>
-
-			<div
-				v-if="currentCard?.question && currentCard?.solution"
-				class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 min-h-64"
-			>
+			<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 min-h-64">
 				<div class="mb-6">
 					<h3 class="text-lg font-semibold text-gray-500 mb-2">Question</h3>
-					<MDC :value="currentCard?.question" />
+					<MDC :value="card?.question || ''" />
 				</div>
 
 				<div v-if="showAnswer" class="border-t pt-6">
 					<h3 class="text-lg font-semibold text-gray-500 mb-2">Answer</h3>
 					<div class="text-xl">
-						<MDC :value="currentCard?.solution" />
+						<MDC :value="card?.solution || ''" />
 					</div>
 				</div>
 			</div>
 
-			<p class="space-x-2 text-center mt-6 text-gray-400 text-sm">
-				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">1 Again</kbd>
-				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">2 Hard</kbd>
-				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">3 Good</kbd>
-				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">4 Easy</kbd>
-				<kbd class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">Space</kbd>
-				{{ showAnswer ? "for next card" : "to reveal answer" }}
-			</p>
+			<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
+				<UButton size="lg" variant="subtle" @click="showAnswer = true"
+					>Show answer</UButton
+				>
+			</div>
+
+			<div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6">
+				<UButton variant="soft" block @click="rate(1)">
+					<span class="font-semibold">1</span>
+					<span class="ml-2">Again</span>
+				</UButton>
+				<UButton variant="soft" block @click="rate(2)">
+					<span class="font-semibold">2</span>
+					<span class="ml-2">Hard</span>
+				</UButton>
+				<UButton variant="soft" block @click="rate(3)">
+					<span class="font-semibold">3</span>
+					<span class="ml-2">Good</span>
+				</UButton>
+				<UButton variant="soft" block @click="rate(4)">
+					<span class="font-semibold">4</span>
+					<span class="ml-2">Easy</span>
+				</UButton>
+			</div>
 		</div>
 	</div>
 </template>
