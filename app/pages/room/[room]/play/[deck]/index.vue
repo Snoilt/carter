@@ -16,6 +16,8 @@ type NextResponse = {
 	}
 }
 
+// ----------------------------------------------------------------------------
+
 const route = useRoute()
 const deckId = computed(() => String(route.params.deck || ""))
 
@@ -27,6 +29,8 @@ const fsrs = ref<NextResponse["fsrs"] | null>()
 
 const showAnswer = ref(false)
 const errorMessage = ref<string | null>()
+
+// ----------------------------------------------------------------------------
 
 const fetchNext = async () => {
 	errorMessage.value = undefined
@@ -53,6 +57,8 @@ const fetchNext = async () => {
 	}
 }
 
+// ----------------------------------------------------------------------------
+
 const rate = async (rating: 1 | 2 | 3 | 4) => {
 	if (!userCardId.value) return
 	try {
@@ -70,6 +76,8 @@ const rate = async (rating: 1 | 2 | 3 | 4) => {
 	}
 }
 
+// ----------------------------------------------------------------------------
+
 const handleSpacebar = () => {
 	if (loading.value || state.value === "none") return
 	showAnswer.value = !showAnswer.value
@@ -83,6 +91,8 @@ defineShortcuts({
 	"4": () => (showAnswer.value ? rate(4) : (showAnswer.value = true)),
 })
 
+// ----------------------------------------------------------------------------
+
 onMounted(() => {
 	fetchNext()
 })
@@ -90,79 +100,52 @@ onMounted(() => {
 
 <template>
 	<MaxContainer class="w-full p-4">
-		<div v-if="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
+		<div class="grid place-items-center min-h-[calc(100svh-64px)] w-full">
+			<div class="w-full">
+				<div v-if="errorMessage" class="text-red-500 mb-4 text-center">
+					{{ errorMessage }}
+				</div>
 
-		<UContainer class="max-w-2xl mx-auto">
-			<Transition name="card-fade" mode="out-in">
-				<div v-if="state !== null" :key="card?.id || state">
-					<div v-if="state === 'none'" class="text-center">
-						<h2 class="text-2xl font-bold mb-2">All caught up 🎉</h2>
-						<p class="text-gray-500">No new or due cards in this deck.</p>
+				<UContainer class="max-w-2xl mx-auto">
+					<Transition name="card-fade" mode="out-in">
+						<div v-if="state !== null" :key="card?.id || state">
+							<PlayStateMessage v-if="state === 'none'" type="none" />
+							<PlayCard v-else :card="card || null" :show-answer="showAnswer" />
+						</div>
+					</Transition>
+
+					<div v-if="state !== 'none'">
+						<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
+							<UButton size="lg" variant="subtle" @click="showAnswer = true"
+								>Show answer</UButton
+							>
+						</div>
+
+						<div v-else class="mt-6">
+							<PlayRatingControls :disabled="loading" @rate="rate" />
+						</div>
 					</div>
 
-					<UCard v-else variant="subtle" class="min-h-64">
-						<div class="mb-6">
-							<h3 class="text-lg font-semibold text-gray-500 mb-2">Question</h3>
-							<MDC :value="card?.question || ''" />
-						</div>
-
-						<div
-							class="border-t overflow-hidden transition-all duration-300 ease-in-out"
-							:class="
-								showAnswer ? 'pt-6 max-h-250 opacity-100' : 'pt-0 max-h-0 opacity-0'
-							"
-						>
-							<h3 class="text-lg font-semibold text-gray-500 mb-2">Answer</h3>
-							<div class="text-xl">
-								<MDC :value="card?.solution || ''" />
-							</div>
-						</div>
-					</UCard>
-				</div>
-			</Transition>
-
-			<div v-if="state !== 'none'">
-				<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
-					<UButton size="lg" variant="subtle" @click="showAnswer = true"
-						>Show answer</UButton
-					>
-				</div>
-
-				<div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6">
-					<UButton variant="soft" block @click="rate(1)">
-						<span class="font-semibold">1</span>
-						<span class="ml-2">Again</span>
-					</UButton>
-					<UButton variant="soft" block @click="rate(2)">
-						<span class="font-semibold">2</span>
-						<span class="ml-2">Hard</span>
-					</UButton>
-					<UButton variant="soft" block @click="rate(3)">
-						<span class="font-semibold">3</span>
-						<span class="ml-2">Good</span>
-					</UButton>
-					<UButton variant="soft" block @click="rate(4)">
-						<span class="font-semibold">4</span>
-						<span class="ml-2">Easy</span>
-					</UButton>
-				</div>
+					<div v-if="loading" class="text-center text-gray-400 text-sm mt-4">
+						Loading…
+					</div>
+				</UContainer>
 			</div>
-
-			<div v-if="loading" class="text-center text-gray-400 text-sm mt-4">Loading…</div>
-		</UContainer>
+		</div>
 	</MaxContainer>
 </template>
+
 <style scoped>
 .card-fade-enter-active,
 .card-fade-leave-active {
 	transition:
-		opacity 125ms ease,
-		transform 125ms ease;
+		opacity 100ms ease,
+		transform 200ms ease;
 }
 .card-fade-enter-from,
 .card-fade-leave-to {
 	opacity: 0;
-	transform: translateY(8px) scale(0.98);
+	transform: translateY(8px) scale(0.99);
 }
 .card-fade-enter-to,
 .card-fade-leave-from {
