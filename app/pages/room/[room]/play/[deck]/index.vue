@@ -126,7 +126,7 @@ onMounted(() => {
 					{{ errorMessage }}
 				</div>
 
-				<UContainer class="max-w-2xl mx-auto">
+				<UContainer class="max-w-2xl mx-auto pb-24">
 					<Transition name="card-fade" mode="out-in">
 						<div v-if="state !== null" :key="card?.id || state">
 							<PlayStateMessage v-if="state === 'none'" type="none" />
@@ -134,19 +134,7 @@ onMounted(() => {
 						</div>
 					</Transition>
 
-					<div v-if="state !== 'none'">
-						<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
-							<UTooltip text="Press" :kbds="['space']">
-								<UButton size="lg" variant="subtle" @click="showAnswer = true">
-									Show answer</UButton
-								>
-							</UTooltip>
-						</div>
-
-						<div v-else class="mt-6">
-							<PlayRatingControls :disabled="loading" @rate="rate" />
-						</div>
-					</div>
+					<!-- in-flow controls removed; fixed controls rendered below -->
 
 					<div v-if="loading" class="text-center text-gray-400 text-sm mt-4">
 						Loading…
@@ -156,6 +144,22 @@ onMounted(() => {
 						<PlayNerdstats :next-fsrs="nextPayload?.fsrs" :review="reviewPayload" />
 					</div>
 				</UContainer>
+
+				<div
+					v-if="state !== 'none'"
+					class="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 z-10"
+				>
+					<div v-if="!showAnswer" class="flex items-center justify-center">
+						<UTooltip text="Press" :kbds="['space']">
+							<UButton size="lg" variant="subtle" @click="showAnswer = true"
+								>Show answer</UButton
+							>
+						</UTooltip>
+					</div>
+					<div v-else>
+						<PlayRatingControls :disabled="loading" @rate="rate" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</MaxContainer>
