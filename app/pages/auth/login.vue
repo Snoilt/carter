@@ -27,8 +27,9 @@ const login = async () => {
 			title: "Login successful",
 			color: "success",
 		})
-	} catch {
+	} catch (error) {
 		toastError("Login failed, please check your credentials and try again.")
+		console.log(error)
 	}
 }
 </script>
