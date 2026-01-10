@@ -6,6 +6,7 @@ const schema = z
 		email: z.email("Invalid email"),
 		password: z.string().min(8, "Password should be at least 8 characters"),
 		passwordConfirm: z.string(),
+		userName: z.string().min(3, "User Name should be at least 3 characters"),
 	})
 	.refine((data) => data.password === data.passwordConfirm, {
 		message: "Passwords don't match",
@@ -18,6 +19,7 @@ const state = reactive<Partial<Schema>>({
 	email: "",
 	password: "",
 	passwordConfirm: "",
+	userName: "",
 })
 
 // -------------------------------------------------------------------------------
@@ -33,6 +35,7 @@ const register = async () => {
 			email: state.email,
 			password: state.password,
 			passwordConfirm: state.passwordConfirm,
+			name: state.userName,
 		})
 
 		await pb.collection("users").authWithPassword(state.email, state.password)
@@ -42,8 +45,9 @@ const register = async () => {
 			title: "Registration successful",
 			color: "success",
 		})
-	} catch {
+	} catch (error) {
 		toastError("Registration failed. Please check your information and try again.")
+		console.log(error)
 	}
 }
 
@@ -64,15 +68,6 @@ defineShortcuts({
 				@submit="register"
 			>
 				<h1 class="font-bold text-2xl">Create your Account</h1>
-				<!-- <UFormField name="name">
-					<UInput
-						v-model="state.name"
-						class="w-full"
-						type="text"
-						placeholder="Name"
-						size="xl"
-					/>
-				</UFormField> -->
 				<UFormField name="email">
 					<UInput
 						v-model="state.email"
@@ -80,6 +75,15 @@ defineShortcuts({
 						type="email"
 						placeholder="E-Mail"
 						size="xl"
+					/>
+				</UFormField>
+				<UFormField name="userName">
+					<UInput
+						v-model="state.userName"
+						type="text"
+						placeholder="Your Name"
+						size="xl"
+						class="w-full"
 					/>
 				</UFormField>
 				<UFormField name="password">
@@ -100,6 +104,7 @@ defineShortcuts({
 						class="w-full"
 					/>
 				</UFormField>
+
 				<UButton type="submit" color="primary" size="xl">Register</UButton>
 
 				<USeparator />
