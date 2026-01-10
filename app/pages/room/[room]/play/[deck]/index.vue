@@ -89,55 +89,84 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="flex flex-col items-center justify-center min-h-screen p-4">
+	<MaxContainer class="w-full p-4">
 		<div v-if="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
 
-		<div v-if="loading" class="text-center text-gray-500">Loading card...</div>
-
-		<div v-else-if="state === 'none'" class="text-center">
-			<h2 class="text-2xl font-bold mb-2">All caught up 🎉</h2>
-			<p class="text-gray-500">No new or due cards in this deck.</p>
-		</div>
-
-		<div v-else class="w-full max-w-2xl">
-			<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 min-h-64">
-				<div class="mb-6">
-					<h3 class="text-lg font-semibold text-gray-500 mb-2">Question</h3>
-					<MDC :value="card?.question || ''" />
-				</div>
-
-				<div v-if="showAnswer" class="border-t pt-6">
-					<h3 class="text-lg font-semibold text-gray-500 mb-2">Answer</h3>
-					<div class="text-xl">
-						<MDC :value="card?.solution || ''" />
+		<UContainer class="max-w-2xl mx-auto">
+			<Transition name="card-fade" mode="out-in">
+				<div v-if="state !== null" :key="card?.id || state">
+					<div v-if="state === 'none'" class="text-center">
+						<h2 class="text-2xl font-bold mb-2">All caught up 🎉</h2>
+						<p class="text-gray-500">No new or due cards in this deck.</p>
 					</div>
+
+					<UCard v-else variant="subtle" class="min-h-64">
+						<div class="mb-6">
+							<h3 class="text-lg font-semibold text-gray-500 mb-2">Question</h3>
+							<MDC :value="card?.question || ''" />
+						</div>
+
+						<div
+							class="border-t overflow-hidden transition-all duration-300 ease-in-out"
+							:class="
+								showAnswer ? 'pt-6 max-h-250 opacity-100' : 'pt-0 max-h-0 opacity-0'
+							"
+						>
+							<h3 class="text-lg font-semibold text-gray-500 mb-2">Answer</h3>
+							<div class="text-xl">
+								<MDC :value="card?.solution || ''" />
+							</div>
+						</div>
+					</UCard>
+				</div>
+			</Transition>
+
+			<div v-if="state !== 'none'">
+				<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
+					<UButton size="lg" variant="subtle" @click="showAnswer = true"
+						>Show answer</UButton
+					>
+				</div>
+
+				<div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6">
+					<UButton variant="soft" block @click="rate(1)">
+						<span class="font-semibold">1</span>
+						<span class="ml-2">Again</span>
+					</UButton>
+					<UButton variant="soft" block @click="rate(2)">
+						<span class="font-semibold">2</span>
+						<span class="ml-2">Hard</span>
+					</UButton>
+					<UButton variant="soft" block @click="rate(3)">
+						<span class="font-semibold">3</span>
+						<span class="ml-2">Good</span>
+					</UButton>
+					<UButton variant="soft" block @click="rate(4)">
+						<span class="font-semibold">4</span>
+						<span class="ml-2">Easy</span>
+					</UButton>
 				</div>
 			</div>
 
-			<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
-				<UButton size="lg" variant="subtle" @click="showAnswer = true"
-					>Show answer</UButton
-				>
-			</div>
-
-			<div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6">
-				<UButton variant="soft" block @click="rate(1)">
-					<span class="font-semibold">1</span>
-					<span class="ml-2">Again</span>
-				</UButton>
-				<UButton variant="soft" block @click="rate(2)">
-					<span class="font-semibold">2</span>
-					<span class="ml-2">Hard</span>
-				</UButton>
-				<UButton variant="soft" block @click="rate(3)">
-					<span class="font-semibold">3</span>
-					<span class="ml-2">Good</span>
-				</UButton>
-				<UButton variant="soft" block @click="rate(4)">
-					<span class="font-semibold">4</span>
-					<span class="ml-2">Easy</span>
-				</UButton>
-			</div>
-		</div>
-	</div>
+			<div v-if="loading" class="text-center text-gray-400 text-sm mt-4">Loading…</div>
+		</UContainer>
+	</MaxContainer>
 </template>
+<style scoped>
+.card-fade-enter-active,
+.card-fade-leave-active {
+	transition:
+		opacity 125ms ease,
+		transform 125ms ease;
+}
+.card-fade-enter-from,
+.card-fade-leave-to {
+	opacity: 0;
+	transform: translateY(8px) scale(0.98);
+}
+.card-fade-enter-to,
+.card-fade-leave-from {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+}
+</style>
