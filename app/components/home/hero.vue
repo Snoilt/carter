@@ -20,17 +20,14 @@
 				<p
 					class="mt-4 max-w-2xl text-base leading-relaxed text-gray-700 dark:text-purpleish-100/80 md:text-lg"
 				>
-					Kardr ist Karteikarten-Lernen - aber motivierend: Tritt gegen Mitschüler:innen
-					und Kommiliton:innen an, sammle XP und verfolge deinen Fortschritt in Echtzeit.
+					Kardr: Karteikarten lernen, aber motivierend. Tritt gegen Mitschüler:innen
+					und Kommiliton:innen an und verfolge deinen Fortschritt in Echtzeit.
 				</p>
 
 				<div
 					class="mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-700 dark:text-purpleish-100/80"
 				>
-					<span
-						class="rounded-full bg-white/5 px-3 py-1 ring-1 ring-gray-400 dark:ring-white/10"
-						>⚔️ 1v1 Duelle</span
-					>
+					
 					<span
 						class="rounded-full bg-white/5 px-3 py-1 ring-1 ring-gray-400 dark:ring-white/10"
 						>🧠 Decks teilen</span
@@ -41,7 +38,7 @@
 					>
 					<span
 						class="rounded-full bg-white/5 px-3 py-1 ring-1 ring-gray-400 dark:ring-white/10"
-						>🏆 Rangliste</span
+						>🏆 Score</span
 					>
 				</div>
 
