@@ -18,6 +18,20 @@ type NextResponse = {
 
 // ----------------------------------------------------------------------------
 
+type ReviewResponse = {
+	userCardId: string
+	attemptId: string
+	rating: number
+	dueAt: string | null
+	stability: number
+	difficulty: number
+	lapses: number
+	state: string
+	lastReviewedAt: string | null
+}
+
+// ----------------------------------------------------------------------------
+
 const route = useRoute()
 const deckId = computed(() => String(route.params.deck || ""))
 
@@ -29,6 +43,9 @@ const fsrs = ref<NextResponse["fsrs"] | null>()
 
 const showAnswer = ref(false)
 const errorMessage = ref<string | null>()
+const showStats = ref(false)
+const nextPayload = ref<NextResponse | undefined>(undefined)
+const reviewPayload = ref<ReviewResponse | undefined>(undefined)
 
 // ----------------------------------------------------------------------------
 
@@ -40,6 +57,7 @@ const fetchNext = async () => {
 		const response = (await pb.send(`/api/learn/next/${deckId.value}`, {
 			method: "GET",
 		})) as NextResponse
+		nextPayload.value = response
 		state.value = response.type
 		if (response.type === "new" || response.type === "due") {
 			card.value = response.card
@@ -62,14 +80,15 @@ const fetchNext = async () => {
 const rate = async (rating: 1 | 2 | 3 | 4) => {
 	if (!userCardId.value) return
 	try {
-		await pb.send(`/api/learn/review`, {
+		const reviewResponse = (await pb.send(`/api/learn/review`, {
 			method: "POST",
 			body: JSON.stringify({
 				userCardId: userCardId.value,
 				rating,
 				attemptId: crypto.randomUUID(),
 			}),
-		})
+		})) as ReviewResponse
+		reviewPayload.value = reviewResponse
 		await fetchNext()
 	} catch (error) {
 		errorMessage.value = `${error}`
@@ -89,6 +108,7 @@ defineShortcuts({
 	"2": () => (showAnswer.value ? rate(2) : (showAnswer.value = true)),
 	"3": () => (showAnswer.value ? rate(3) : (showAnswer.value = true)),
 	"4": () => (showAnswer.value ? rate(4) : (showAnswer.value = true)),
+	d: () => (showStats.value = !showStats.value),
 })
 
 // ----------------------------------------------------------------------------
@@ -116,9 +136,11 @@ onMounted(() => {
 
 					<div v-if="state !== 'none'">
 						<div v-if="!showAnswer" class="flex items-center justify-center gap-2 mt-6">
-							<UButton size="lg" variant="subtle" @click="showAnswer = true"
-								>Show answer</UButton
-							>
+							<UTooltip text="Press" :kbds="['space']">
+								<UButton size="lg" variant="subtle" @click="showAnswer = true">
+									Show answer</UButton
+								>
+							</UTooltip>
 						</div>
 
 						<div v-else class="mt-6">
@@ -128,6 +150,10 @@ onMounted(() => {
 
 					<div v-if="loading" class="text-center text-gray-400 text-sm mt-4">
 						Loading…
+					</div>
+
+					<div v-if="showStats" class="mt-6">
+						<PlayNerdstats :next-fsrs="nextPayload?.fsrs" :review="reviewPayload" />
 					</div>
 				</UContainer>
 			</div>
