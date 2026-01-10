@@ -62,14 +62,11 @@ onMounted(() => {
 
 				<p class="font-light text-sm text-gray-500 mt-2">{{ collection.description }}</p>
 				<div class="flex items-center space-x-3"></div>
-				<div class="font-light text-sm text-gray-500 mt-2">
-					<!-- <p>{{ collection.cards }} Cards</p> -->
-					<!-- <p>{{ collection.lastPlayed }} days ago</p> -->
-				</div>
+				<div class="font-light text-sm text-gray-500 mt-2"></div>
 
 				<template #footer>
-					<UButton size="xl" block variant="outline"
-						><NuxtLink :to="`/room/${collection.id}`">Join</NuxtLink></UButton
+					<NuxtLink :to="`/room/${collection.id}`">
+						<UButton size="xl" block variant="outline">Join</UButton></NuxtLink
 					>
 				</template>
 			</UCard>
