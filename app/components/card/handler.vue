@@ -40,6 +40,9 @@ const saveCard = async () => {
 	}
 
 	emit("cardUpdate")
+	// TODO: fix this somehow
+	backContent.value = "ㅤㅤㅤㅤㅤ"
+	frontContent.value = "ㅤㅤㅤㅤㅤ"
 	open.value = false
 }
 
@@ -73,11 +76,11 @@ const deleteCard = async () => {
 			<div class="space-y-8">
 				<div>
 					<h1 class="text-2xl font-bold">Front</h1>
-					<CardEditor v-model="frontContent" />
+					<CardEditor v-model:value="frontContent" />
 				</div>
 				<div>
 					<h1 class="text-2xl font-bold">Back</h1>
-					<CardEditor v-model="backContent" />
+					<CardEditor v-model:value="backContent" />
 				</div>
 				<div class="flex gap-2">
 					<UButton

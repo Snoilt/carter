@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EditorToolbarItem } from "@nuxt/ui"
 
-const modelValue = defineModel<string>()
+const editorValue = defineModel<string>("value", {})
 
 const items: EditorToolbarItem[][] = [
 	// Block types
@@ -135,13 +135,19 @@ const items: EditorToolbarItem[][] = [
 		},
 	],
 ]
+
+onMounted(async () => {
+	if (editorValue.value == "ㅤㅤㅤㅤㅤ") {
+		editorValue.value = ""
+	}
+})
 </script>
 
 <template>
 	<UContainer class="border border-gray-300 rounded-md p-4 mt-4">
 		<UEditor
 			v-slot="{ editor }"
-			v-model="modelValue"
+			v-model="editorValue"
 			content-type="markdown"
 			class="w-full min-h-50 flex flex-col gap-4"
 			placeholder="hmmm..."
