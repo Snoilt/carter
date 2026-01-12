@@ -20,7 +20,7 @@ func main() {
 		routes.Review(se)
 		routes.Next(se)
 
-		se.Router.GET("/{path...}", apis.Static(os.DirFS("pb_public"), false))
+		se.Router.GET("/{path...}", apis.Static(os.DirFS("pb_public"), true))
 
 		return se.Next()
 	})
