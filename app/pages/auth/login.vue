@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import * as z from "zod"
 
+const toast = useToast()
+
 const schema = z.object({
 	email: z.email("invalid email"),
 	password: z.string().min(8, "Password should be at least 8 characters "),
@@ -15,6 +17,14 @@ const state = reactive<Partial<Schema>>({
 
 // ------------------------------------------------------------------------------
 
+const OAuth = (provider: "google" | "apple" | "github") => {
+	pb.collection("users").authWithOAuth2({
+		provider: provider,
+	})
+}
+
+// ------------------------------------------------------------------------------
+
 const login = async () => {
 	try {
 		if (typeof state.email !== "string" || typeof state.password !== "string") {
@@ -23,13 +33,16 @@ const login = async () => {
 		await pb.collection("users").authWithPassword(state.email, state.password)
 		navigateTo("/dashboard")
 
-		useToast().add({
+		toast.add({
 			title: "Login successful",
 			color: "success",
 		})
-	} catch (error) {
-		toastError("Login failed, please check your credentials and try again.")
-		console.log(error)
+	} catch {
+		toast.add({
+			title: "Error",
+			description: "Something went wrong",
+			color: "error",
+		})
 	}
 }
 </script>
@@ -67,13 +80,13 @@ const login = async () => {
 				<USeparator />
 
 				<p>Or log in with an existing Account</p>
-				<UButton variant="outline" size="xl"
+				<UButton variant="outline" size="xl" @click="OAuth('apple')"
 					><Icon size="20" name="uil:apple" />Log in with Apple</UButton
 				>
-				<UButton variant="outline" size="xl"
+				<UButton variant="outline" size="xl" @click="OAuth('google')"
 					><Icon size="20" name="uil:google" />Log in with Google</UButton
 				>
-				<UButton variant="outline" size="xl"
+				<UButton variant="outline" size="xl" @click="OAuth('github')"
 					><Icon size="20" name="uil:github" />Log in with Github</UButton
 				>
 

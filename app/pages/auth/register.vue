@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { z } from "zod"
 
+const toast = useToast()
+
 const schema = z
 	.object({
 		email: z.email("Invalid email"),
@@ -27,7 +29,11 @@ const state = reactive<Partial<Schema>>({
 const register = async () => {
 	try {
 		if (!state.email || !state.password) {
-			toastError("Invalid email or password format")
+			toast.add({
+				title: "Error",
+				description: "Email and Password are required",
+				color: "error",
+			})
 			throw new Error("Invalid email or password format")
 		}
 
@@ -46,7 +52,11 @@ const register = async () => {
 			color: "success",
 		})
 	} catch (error) {
-		toastError("Registration failed. Please check your information and try again.")
+		toast.add({
+			title: "Error",
+			description: "Something went wrong",
+			color: "error",
+		})
 		console.log(error)
 	}
 }
