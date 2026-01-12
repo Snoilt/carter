@@ -45,6 +45,8 @@ const createDeck = async () => {
 		})
 	}
 	emit("decksUpdated")
+	deckName.value = ""
+	deckDescription.value = ""
 }
 
 // ----------------------------------------------------------------------------
