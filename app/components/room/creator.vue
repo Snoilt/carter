@@ -27,21 +27,21 @@ const createCollection = async (close: () => void) => {
 	if (!user) {
 		throw new Error("User must be logged in to create a collection")
 	}
-	try {
-		if (props.room) {
-			try {
-				await pb.collection("rooms").update(props.room.id, {
-					name: collectionTitle.value,
-					description: collectionDescription.value,
-				})
-				useToast().add({
-					title: "Room edited successfully",
-					color: "success",
-				})
-			} catch (error) {
-				console.error("Error updating room:", error)
-			}
-		} else {
+	if (props.room) {
+		try {
+			await pb.collection("rooms").update(props.room.id, {
+				name: collectionTitle.value,
+				description: collectionDescription.value,
+			})
+			useToast().add({
+				title: "Room edited successfully",
+				color: "success",
+			})
+		} catch (error) {
+			console.error("Error updating room:", error)
+		}
+	} else {
+		try {
 			await pb.collection("rooms").create({
 				id: "",
 				user: [user.id],
@@ -54,11 +54,10 @@ const createCollection = async (close: () => void) => {
 				title: "Room created successfully",
 				color: "success",
 			})
+		} catch (error) {
+			console.error("Error creating room:", error)
 		}
-	} catch (error) {
-		console.error("Error creating room:", error)
 	}
-
 	close()
 	emit("collectionsUpdated")
 	collectionTitle.value = ""
