@@ -1,0 +1,8 @@
+name: carter
+services:
+  pocketbase:
+    image: ghcr.io/snoilt/carter:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./pb_data:/app/pb_data
