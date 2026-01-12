@@ -16,7 +16,6 @@ definePageMeta({
 	<div
 		class="relative isolate min-h-svh overflow-hidden bg-white text-black dark:bg-randoblue-950 dark:text-purpleish-50"
 	>
-		<DotGrid class="pointer-events-none absolute inset-0 z-0 opacity-35" />
 		<div
 			class="pointer-events-none absolute inset-0 z-0 dark:bg-linear-to-b dark:from-black/15 dark:via-black/45 dark:to-black/70"
 		/>
