@@ -1,46 +1,76 @@
 <script setup lang="ts">
-const emit = defineEmits(["created"])
+import type { RoomsRecord } from "~/types/pb"
+
+const emit = defineEmits(["collectionsUpdated"])
+const props = defineProps<{
+	room?: RoomsRecord
+}>()
+
+// ----------------------------------------------------------------------------
 
 const open = defineModel<boolean>("open")
-
 const user = new User()
-
 const collectionTitle = ref("")
 const collectionDescription = ref("")
-
 const emailList = ref<string[]>([])
 
-function createCollection(close: () => void) {
+//----------------------------------------------------------------------------
+
+if (props.room) {
+	collectionDescription.value = props.room.description || ""
+	collectionTitle.value = props.room.name || ""
+}
+
+// ----------------------------------------------------------------------------
+
+const createCollection = async (close: () => void) => {
 	if (!user) {
 		throw new Error("User must be logged in to create a collection")
 	}
-
 	try {
-		pb.collection("rooms").create({
-			id: "",
-			user: [user.id],
-			creator: user.id,
-			name: collectionTitle.value,
-			description: collectionDescription.value,
-		})
-		useToast().add({
-			title: "Deck created successfully",
-			color: "success",
-		})
+		if (props.room) {
+			try {
+				await pb.collection("rooms").update(props.room.id, {
+					name: collectionTitle.value,
+					description: collectionDescription.value,
+				})
+				useToast().add({
+					title: "Room edited successfully",
+					color: "success",
+				})
+			} catch (error) {
+				console.error("Error updating room:", error)
+			}
+		} else {
+			await pb.collection("rooms").create({
+				id: "",
+				user: [user.id],
+				creator: user.id,
+				name: collectionTitle.value,
+				description: collectionDescription.value,
+			})
+
+			useToast().add({
+				title: "Room created successfully",
+				color: "success",
+			})
+		}
 	} catch (error) {
-		toastError(`${error}`)
+		console.error("Error creating room:", error)
 	}
 
 	close()
-	emit("created")
-	console.log("Collection created, modal closed")
+	emit("collectionsUpdated")
+	collectionTitle.value = ""
+	collectionDescription.value = ""
+	emailList.value = []
 }
 </script>
 
 <template>
 	<UModal
 		v-model:open="open"
-		aria-describedby="create-collection-modal"
+		aria-describedby="create-room-modal"
 		title="Create a new Collection"
 	>
 		<template #body>
@@ -71,10 +101,18 @@ function createCollection(close: () => void) {
 				</UFormField>
 			</UForm>
 		</template>
+
+		<!-- ---------------------------------------------------------------------------- -->
+
 		<template #footer="{ close }">
-			<UButton color="primary" size="xl" class="w-full" @click="createCollection(close)"
-				>Create Deck</UButton
+			<UButton
+				color="primary"
+				size="xl"
+				class="text-center w-full"
+				@click="createCollection(close)"
 			>
+				{{ props.room ? "Save Deck" : "Create Deck" }}
+			</UButton>
 		</template>
 		<slot />
 	</UModal>

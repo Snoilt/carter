@@ -1,5 +1,5 @@
 import type { AuthRecord } from "pocketbase"
-import type { RoomsResponse } from "~/types/pb"
+import type { RoomsRecord } from "~/types/pb"
 
 export class User {
 	id: string
@@ -11,14 +11,14 @@ export class User {
 		this.email = user.email
 	}
 
-	getRole(collection: RoomsResponse): 0 | 1 | 2 {
+	getRole(collection: RoomsRecord): 0 | 1 | 2 {
 		if (this.id == collection.creator) return 2
 		else if (collection.admins && collection.admins.includes(this.id)) return 1
 		else return 0
 	}
 
-	getCollections(): Promise<RoomsResponse[]> {
-		return pb.collection("rooms").getFullList<RoomsResponse>()
+	getCollections(): Promise<RoomsRecord[]> {
+		return pb.collection("rooms").getFullList<RoomsRecord>()
 	}
 
 	logOut() {

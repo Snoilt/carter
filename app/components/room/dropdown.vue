@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { removeCollection } from "~/composables/database/remove-collection"
-import type { RoomsResponse } from "~/types/pb"
+import type { RoomsRecord } from "~/types/pb"
 
 const emit = defineEmits(["action"])
 
 const user = new User()
 
 const props = defineProps<{
-	collection: RoomsResponse
+	room: RoomsRecord
 }>()
 
 const isModalOpen = ref(false)
@@ -17,7 +17,7 @@ const items = computed(() => {
 		{
 			label: "Edit",
 			icon: "lucide:pencil",
-			show: user.getRole(props.collection) >= 1,
+			show: user.getRole(props.room) >= 1,
 			onSelect: (_event: Event) => {
 				isModalOpen.value = true
 			},
@@ -28,7 +28,7 @@ const items = computed(() => {
 			icon: "lucide:trash",
 			show: true,
 			onSelect: (_event: Event) => {
-				removeCollection(props.collection)
+				removeCollection(props.room)
 				emit("action")
 				console.log("Remove action selected")
 			},
@@ -40,7 +40,11 @@ const items = computed(() => {
 </script>
 
 <template>
-	<RoomCreator v-model:open="isModalOpen" @created="emit('action')" />
+	<RoomCreator
+		v-model:open="isModalOpen"
+		:room="room"
+		@collections-updated="emit('action')"
+	/>
 	<UDropdownMenu :ui="{ content: 'w-40' }" :items="items">
 		<UButton variant="ghost" size="sm" icon="lucide:more-horizontal" />
 	</UDropdownMenu>

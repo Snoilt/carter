@@ -9,12 +9,13 @@ const props = defineProps<{
 // ----------------------------------------------------------------------------
 
 const fetchDecks = async () => {
-	// TODO: Create API rules to restrict access
-	decks.value = await pb
-		.collection("decks")
-		.getFullList({ filter: `roomId = "${props.room.id}"`, sort: "+created" })
-
-	console.log("decks:", decks.value)
+	try {
+		decks.value = await pb
+			.collection("decks")
+			.getFullList({ filter: `roomId = "${props.room.id}"`, sort: "+created" })
+	} catch (error) {
+		console.error("Failed to fetch decks:", error)
+	}
 }
 
 // ----------------------------------------------------------------------------

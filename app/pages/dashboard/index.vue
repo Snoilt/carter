@@ -2,32 +2,19 @@
 import type { RoomsResponse } from "~/types/pb"
 
 const collections = ref<RoomsResponse[]>([])
-const loading = ref(false)
 
 const fetchCollections = async () => {
-	loading.value = true
 	try {
-		const user = new User()
-		if (!user) {
-			throw new Error("User must be logged in to view collections")
-		}
-
-		const result = await pb.collection("rooms").getFullList<RoomsResponse>(undefined, {
-			filter: `user ~ "${user.id}"`,
+		collections.value = await pb.collection("rooms").getFullList<RoomsResponse>({
 			sort: "-created",
 		})
-		console.log(collections)
-		collections.value = result
-		console.log("Collections fetched:", collections.value)
 	} catch (error) {
-		toastError(`${error}`)
-	} finally {
-		loading.value = false
+		console.error("Failed to fetch collections:", error)
 	}
 }
 
-onMounted(() => {
-	fetchCollections()
+onMounted(async () => {
+	await fetchCollections()
 })
 </script>
 
@@ -35,13 +22,13 @@ onMounted(() => {
 	<UContainer class="space-y-6">
 		<h1 class="mt-5 text-xl font-bold">Your Collections</h1>
 		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-			<RoomCreator @created="fetchCollections">
+			<RoomCreator @collections-updated="fetchCollections()">
 				<UButton variant="outline" icon="lucide:plus" size="xl" class="justify-center"
 					>Create Collection</UButton
 				>
 			</RoomCreator>
 
-			<UCard v-if="!loading && collections.length === 0" variant="subtle">
+			<UCard v-if="collections.length === 0" variant="subtle">
 				<template #header>
 					<h1>No collections yet</h1>
 				</template>
@@ -56,7 +43,7 @@ onMounted(() => {
 				<template #header>
 					<div class="flex items-center justify-between">
 						<h1>{{ collection.name }}</h1>
-						<RoomDropdown :collection="collection" @action="fetchCollections" />
+						<RoomDropdown :room="collection" @action="fetchCollections" />
 					</div>
 				</template>
 
