@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 )
@@ -18,6 +19,9 @@ func main() {
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		routes.Review(se)
 		routes.Next(se)
+
+		se.Router.GET("/{path...}", apis.Static(os.DirFS("pb_public"), false))
+
 		return se.Next()
 	})
 
