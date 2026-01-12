@@ -1,28 +1,12 @@
 <script setup lang="ts">
 const items = [
 	{
-		image: "https://i.pravatar.cc/300?img=8",
-		title: "Emilio Dagn",
-		subtitle: "UI/UX Designer & Founder",
-		handle: "@74emilio",
-		borderColor: "#4F46E5",
-		url: "https://github.com/",
-	},
-	{
 		image: "https://i.pravatar.cc/300?img=11",
 		title: "Paul Oellers",
-		subtitle: "Full Stack Developer & Founder",
+		subtitle: "Projektmanager,Full Stack Developer & Founder",
 		handle: "@pauloellers",
 		borderColor: "#10B981",
-		url: "https://linkedin.com/in/",
-	},
-	{
-		image: "https://i.pravatar.cc/300?img=16",
-		title: "Nadine Evin",
-		subtitle: "Projektmanagerin & Marketing & Founder",
-		handle: "@nadineevin",
-		borderColor: "#F59E0B",
-		url: "https://dribbble.com/",
+		url: "https://github.com/Snoilt",
 	},
 	{
 		image: "https://i.pravatar.cc/300?img=3",
@@ -30,7 +14,23 @@ const items = [
 		subtitle: "Full Stack Developer & Founder",
 		handle: "@roberthegerath",
 		borderColor: "#EF4444",
-		url: "https://kaggle.com/",
+		url: "https://de.linkedin.com/in/robert-hegerath-5a7b17294",
+	},
+	{
+		image: "https://i.pravatar.cc/300?img=8",
+		title: "Emilio Dagn",
+		subtitle: "UI/UX Designer & Founder",
+		handle: "@74emilio",
+		borderColor: "#4F46E5",
+		url: "https://de.linkedin.com/in/emilio-dagn-b47050197",
+	},
+	{
+		image: "https://i.pravatar.cc/300?img=16",
+		title: "Nadine Evin",
+		subtitle: "Marketing & Founder",
+		handle: "@nadineevin",
+		borderColor: "#F59E0B",
+		url: "https://de.linkedin.com/in/nadine-evin-5314b2298",
 	},
 ]
 </script>
@@ -52,7 +52,6 @@ const items = [
 				<NuxtLink v-for="(member, i) in items" :key="i" :to="member.url" target="_blank">
 					<UCard
 						class="bg-white/20 dark:bg-white/5 ring-1 ring-gray-200/50 dark:ring-white/10 hover:ring-2 transition-all duration-300 rounded-3xl h-full"
-						:ui="{ body: { padding: 'p-4' } }"
 						variant="subtle"
 					>
 						<!-- Avatar -->

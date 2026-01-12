@@ -20,14 +20,13 @@
 				<p
 					class="mt-4 max-w-2xl text-base leading-relaxed text-gray-700 dark:text-purpleish-100/80 md:text-lg"
 				>
-					Kardr: Karteikarten lernen, aber motivierend. Tritt gegen Mitschüler:innen
-					und Kommiliton:innen an und verfolge deinen Fortschritt in Echtzeit.
+					Kardr: Karteikarten lernen, aber motivierend. Tritt gegen Mitschüler:innen und
+					Kommiliton:innen an und verfolge deinen Fortschritt in Echtzeit.
 				</p>
 
 				<div
 					class="mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-700 dark:text-purpleish-100/80"
 				>
-					
 					<span
 						class="rounded-full bg-white/5 px-3 py-1 ring-1 ring-gray-400 dark:ring-white/10"
 						>🧠 Decks teilen</span
@@ -44,21 +43,10 @@
 
 				<div class="mt-8 flex flex-col gap-3 sm:flex-row">
 					<NuxtLink to="/auth/register" class="w-full sm:w-auto">
-						<UButton
-							size="lg"
-							class="w-full bg-blue-400 hover:bg-blue-500 text-white dark:bg-dollepink-500 dark:hover:bg-dollepink-400"
-						>
-							Kostenlos starten
-						</UButton>
+						<UButton size="lg" class="w-full"> Kostenlos starten </UButton>
 					</NuxtLink>
 					<a href="#features" class="w-full sm:w-auto">
-						<UButton
-							size="lg"
-							variant="outline"
-							class="w-full border-blue-400 dark:border-white/15 text-black dark:text-purpleish-50 hover:bg-blue-50 dark:hover:bg-white/5"
-						>
-							Mehr erfahren
-						</UButton>
+						<UButton size="lg" variant="outline" class="w-full"> Mehr erfahren </UButton>
 					</a>
 				</div>
 			</div>
