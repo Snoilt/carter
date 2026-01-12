@@ -26,4 +26,5 @@ logs
 
 pb_data
 pb_public
-database/database
+
+Dockerfile
