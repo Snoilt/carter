@@ -27,10 +27,9 @@ const items = computed(() => {
 			label: "Remove",
 			icon: "lucide:trash",
 			show: true,
-			onSelect: (_event: Event) => {
-				removeCollection(props.room)
+			onSelect: async (_event: Event) => {
+				await removeCollection(props.room)
 				emit("action")
-				console.log("Remove action selected")
 			},
 		},
 	]
