@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "database/migrations"
 	"database/routes"
 	"log"
 	"os"
