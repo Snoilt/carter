@@ -7,7 +7,7 @@ definePageMeta({
 		{
 			name: "description",
 			content:
-				"Kardr macht Karteikarten-Lernen motivierend: Duelle, Decks teilen, Streaks und Team-Features mit Gamification.",
+				"Kardr macht Karteikarten lernen motivierend: Decks teilen, Streaks und Team-Features mit Gamification.",
 		},
 	],
 })
