@@ -4,11 +4,10 @@
 asdasdasd*/
 
 :root {
-	--font-family: "Jetbrains Mono", sans-serif;
-	
+	--font-family: "JetBrains Mono", sans-serif;
 }
 @theme static {
-	--font-sans: "Jetbrains Mono", sans-serif;
+	--font-sans: "JetBrains Mono", sans-serif;
 
 	--color-purpleish-50: hsl(235.7 77.8% 96.5%);
 	--color-purpleish-100: hsl(237.5 75% 93.7%);
@@ -50,4 +49,3 @@ asdasdasd*/
 	--color-background: var(--bg);
 	--color-text: var(--text);
 }
-
