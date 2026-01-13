@@ -4,9 +4,6 @@ import type { RoomsRecord } from "~/types/pb"
 const open = defineModel<boolean>("open")
 const props = defineProps<{ room: RoomsRecord }>()
 
-// const emailList = ref<string[]>([])
-// const creatingEmails = ref(false)
-// const createdInvites = ref<{ email: string; url: string }[]>([])
 const generatingLink = ref(false)
 const inviteLink = ref<string | null>()
 
@@ -15,29 +12,6 @@ const inviteLink = ref<string | null>()
 const origin = computed(() =>
 	import.meta.client && typeof location !== "undefined" ? location.origin : "",
 )
-
-// ----------------------------------------------------------------------------
-
-// async function createEmailInvites() {
-// 	if (emailList.value.length === 0) return
-// 	creatingEmails.value = true
-// 	try {
-// 		const response = await pb.send(`/api/room/${props.room.id}/invites/by-email`, {
-// 			method: "POST",
-// 			body: { emails: emailList.value },
-// 		})
-// 		const invites = (response?.invites || []) as { email: string; url: string }[]
-// 		createdInvites.value = invites
-// 		useToast().add({
-// 			title: `Created ${invites.length} invite link(s)`,
-// 			color: "success",
-// 		})
-// 	} catch {
-// 		useToast().add({ title: "Failed to create invites", color: "error" })
-// 	} finally {
-// 		creatingEmails.value = false
-// 	}
-// }
 
 // ----------------------------------------------------------------------------
 
@@ -94,37 +68,7 @@ async function copyToClipboard(text?: string | null) {
 					</p>
 				</div>
 
-				<!-- <div>
-					<h3 class="mb-2 font-medium">Invite by Email</h3>
-					<UForm>
-						<UFormField name="emails" label="Emails">
-							<UInputTags v-model="emailList" placeholder="Type email and press Enter" />
-						</UFormField>
-					</UForm>
-					<div class="mt-2 flex gap-2">
-						<UButton
-							color="primary"
-							:loading="creatingEmails"
-							:disabled="emailList.length === 0"
-							@click="createEmailInvites"
-						>
-							Create Invites
-						</UButton>
-						<UButton variant="ghost" @click="emailList = []">Clear</UButton>
-					</div>
-
-					<div v-if="createdInvites.length > 0" class="mt-4 space-y-2">
-						<h4 class="text-sm font-medium">Created links</h4>
-						<div
-							v-for="it in createdInvites"
-							:key="it.email"
-							class="flex items-center gap-2"
-						>
-							<span class="w-36 truncate text-sm" :title="it.email">{{ it.email }}</span>
-							<UButton size="xs" @click="copyToClipboard(it.url)">Copy</UButton>
-						</div>
-					</div>
-				</div> -->
+				<!-- email-based invites removed -->
 			</div>
 		</template>
 		<template #footer>

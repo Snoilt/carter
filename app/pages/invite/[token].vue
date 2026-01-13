@@ -16,8 +16,8 @@ const token = computed(() => route.params.token as string)
 
 const loading = ref(true)
 const accepting = ref(false)
-const preview = ref<PreviewResponse | null>(null)
-const error = ref<string | null>(null)
+const preview = ref<PreviewResponse | null>()
+const error = ref<string | null>()
 
 const isLoggedIn = computed(() => {
 	try {
@@ -29,17 +29,14 @@ const isLoggedIn = computed(() => {
 
 async function loadPreview() {
 	loading.value = true
-	error.value = null
+	error.value = undefined
 	try {
-		const res = (await pb.send(`/api/invite/${token.value}`, {
+		const response = (await pb.send(`/api/invite/${token.value}`, {
 			method: "GET",
 		})) as PreviewResponse
-		preview.value = res
+		preview.value = response
 
-		if (res?.valid && res?.requiresAuth && !isLoggedIn.value) {
-			const next = encodeURIComponent(route.fullPath)
-			return router.replace(`/auth/login?next=${next}`)
-		}
+		// preview is public; we handle auth on accept
 	} catch {
 		error.value = "Failed to load invite."
 	} finally {
@@ -50,17 +47,21 @@ async function loadPreview() {
 async function acceptInvite() {
 	if (accepting.value) return
 	accepting.value = true
-	error.value = null
+	error.value = undefined
 	try {
-		const res = (await pb.send(`/api/invite/${token.value}/accept`, {
+		if (!isLoggedIn.value) {
+			const next = encodeURIComponent(route.fullPath)
+			return router.replace(`/auth/login?next=${next}`)
+		}
+		const response = (await pb.send(`/api/invite/${token.value}/accept`, {
 			method: "POST",
 		})) as {
 			joined: boolean
 			roomId: string
 			alreadyMember?: boolean
 		}
-		if (res?.joined && res?.roomId) {
-			return router.replace(`/room/${res.roomId}`)
+		if (response?.joined && response?.roomId) {
+			return router.replace(`/room/${response.roomId}`)
 		}
 		error.value = "Could not join the room."
 	} catch (error_: any) {

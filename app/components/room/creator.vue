@@ -12,7 +12,6 @@ const open = defineModel<boolean>("open")
 const user = new User()
 const collectionTitle = ref("")
 const collectionDescription = ref("")
-const emailList = ref<string[]>([])
 
 //----------------------------------------------------------------------------
 
@@ -42,31 +41,13 @@ const createCollection = async (close: () => void) => {
 		}
 	} else {
 		try {
-			const created = await pb.collection("rooms").create({
+			await pb.collection("rooms").create({
 				id: "",
 				user: [user.id],
 				creator: user.id,
 				name: collectionTitle.value,
 				description: collectionDescription.value,
 			})
-			if (emailList.value.length > 0 && created?.id) {
-				try {
-					await pb.send(`/api/room/${created.id}/invites/by-email`, {
-						method: "POST",
-						body: { emails: emailList.value },
-					})
-					useToast().add({
-						title: `Invites sent to ${emailList.value.length} email(s)`,
-						color: "success",
-					})
-				} catch (error) {
-					console.error("Error creating invites:", error)
-					useToast().add({
-						title: "Could not create email invites",
-						color: "error",
-					})
-				}
-			}
 			useToast().add({
 				title: "Room created successfully",
 				color: "success",
@@ -79,7 +60,6 @@ const createCollection = async (close: () => void) => {
 	emit("collectionsUpdated")
 	collectionTitle.value = ""
 	collectionDescription.value = ""
-	emailList.value = []
 }
 </script>
 
@@ -103,14 +83,6 @@ const createCollection = async (close: () => void) => {
 					<UInput
 						v-model="collectionDescription"
 						placeholder="My Biology Collection"
-						size="xl"
-						class="w-full"
-					/>
-				</UFormField>
-				<UFormField v-if="!props.room" name="emails" label="Share with Others">
-					<UInputTags
-						v-model="emailList"
-						placeholder="Press enter to add E-Mails"
 						size="xl"
 						class="w-full"
 					/>

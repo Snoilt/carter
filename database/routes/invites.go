@@ -2,7 +2,6 @@ package routes
 
 import (
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/pocketbase/dbx"
@@ -14,14 +13,8 @@ type createInviteReq struct {
 	TTLSeconds int `json:"ttlSeconds"`
 }
 
-type createInvitesByEmailReq struct {
-	Emails     []string `json:"emails"`
-	TTLSeconds int      `json:"ttlSeconds"`
-}
-
-// Invites registers invite-by-link endpoints.
 func Invites(se *core.ServeEvent) {
-	// POST /api/room/{roomId}/invite
+
 	se.Router.POST("/api/room/{roomId}/invite", func(e *core.RequestEvent) error {
 		roomId := e.Request.PathValue("roomId")
 		if roomId == "" {
@@ -31,7 +24,6 @@ func Invites(se *core.ServeEvent) {
 			return e.JSON(http.StatusUnauthorized, map[string]any{"message": "Unauthorized"})
 		}
 
-		// fetch room and verify permissions (creator or admin)
 		room, err := se.App.FindRecordById("rooms", roomId)
 		if err != nil || room == nil {
 			return e.JSON(http.StatusNotFound, map[string]any{"message": "Room not found"})
@@ -40,13 +32,11 @@ func Invites(se *core.ServeEvent) {
 			return e.JSON(http.StatusForbidden, map[string]any{"message": "Forbidden"})
 		}
 
-		// parse TTL
 		body := createInviteReq{}
 		_ = e.BindBody(&body)
 		ttl := clampTTL(body.TTLSeconds)
 		expiresAt := time.Now().Add(time.Duration(ttl) * time.Second)
 
-		// create invite (untargeted)
 		invCol, err := se.App.FindCollectionByNameOrId("room_invites")
 		if err != nil {
 			return e.JSON(http.StatusInternalServerError, map[string]any{"message": "Invites collection missing"})
@@ -70,83 +60,7 @@ func Invites(se *core.ServeEvent) {
 		})
 	}).Bind(apis.RequireAuth())
 
-	// POST /api/room/{roomId}/invites/by-email
-	se.Router.POST("/api/room/{roomId}/invites/by-email", func(e *core.RequestEvent) error {
-		roomId := e.Request.PathValue("roomId")
-		if roomId == "" {
-			return e.JSON(http.StatusBadRequest, map[string]any{"message": "Missing roomId"})
-		}
-		if e.Auth == nil || e.Auth.Id == "" {
-			return e.JSON(http.StatusUnauthorized, map[string]any{"message": "Unauthorized"})
-		}
-
-		room, err := se.App.FindRecordById("rooms", roomId)
-		if err != nil || room == nil {
-			return e.JSON(http.StatusNotFound, map[string]any{"message": "Room not found"})
-		}
-		if !isCreatorOrAdmin(room, e.Auth.Id) {
-			return e.JSON(http.StatusForbidden, map[string]any{"message": "Forbidden"})
-		}
-
-		body := createInvitesByEmailReq{}
-		if err := e.BindBody(&body); err != nil {
-			return e.JSON(http.StatusBadRequest, map[string]any{"message": "Invalid body"})
-		}
-		if len(body.Emails) == 0 {
-			return e.JSON(http.StatusBadRequest, map[string]any{"message": "No emails provided"})
-		}
-		// dedupe + normalize
-		const maxBulk = 100
-		dedup := make(map[string]struct{}, len(body.Emails))
-		emails := make([]string, 0, len(body.Emails))
-		for _, em := range body.Emails {
-			em = strings.TrimSpace(strings.ToLower(em))
-			if em == "" {
-				continue
-			}
-			if _, ok := dedup[em]; ok {
-				continue
-			}
-			dedup[em] = struct{}{}
-			emails = append(emails, em)
-			if len(emails) >= maxBulk {
-				break
-			}
-		}
-		if len(emails) == 0 {
-			return e.JSON(http.StatusBadRequest, map[string]any{"message": "No valid emails"})
-		}
-
-		ttl := clampTTL(body.TTLSeconds)
-		expiresAt := time.Now().Add(time.Duration(ttl) * time.Second)
-
-		invCol, err := se.App.FindCollectionByNameOrId("room_invites")
-		if err != nil {
-			return e.JSON(http.StatusInternalServerError, map[string]any{"message": "Invites collection missing"})
-		}
-
-		results := make([]map[string]any, 0, len(emails))
-		for _, em := range emails {
-			inv := core.NewRecord(invCol)
-			inv.Set("room", roomId)
-			inv.Set("created_by", e.Auth.Id)
-			inv.Set("expires_at", expiresAt)
-			inv.Set("target_email", em)
-
-			if err := se.App.Save(inv); err != nil {
-				// skip failed ones, continue with others
-				continue
-			}
-			results = append(results, map[string]any{
-				"email":     em,
-				"token":     inv.Id,
-				"url":       "/invite/" + inv.Id,
-				"expiresAt": expiresAt,
-			})
-		}
-
-		return e.JSON(http.StatusOK, map[string]any{"invites": results})
-	}).Bind(apis.RequireAuth())
+	// removed by-email bulk endpoint (untargeted invites only)
 
 	// GET /api/invite/{token}
 	se.Router.GET("/api/invite/{token}", func(e *core.RequestEvent) error {
@@ -169,18 +83,6 @@ func Invites(se *core.ServeEvent) {
 		// ensure not used (if schema tracks used fields)
 		if inv.Get("used_at") != nil && inv.GetDateTime("used_at").Unix() > 0 {
 			return e.JSON(http.StatusOK, map[string]any{"valid": false, "reason": "used"})
-		}
-
-		// optionally restrict preview for targeted invites to the target holder
-		targetEmail := strings.ToLower(inv.GetString("target_email"))
-		requiresAuth := targetEmail != ""
-		if requiresAuth {
-			if e.Auth == nil || e.Auth.Id == "" {
-				return e.JSON(http.StatusOK, map[string]any{"valid": true, "requiresAuth": true})
-			}
-			if strings.ToLower(e.Auth.Email()) != targetEmail {
-				return e.JSON(http.StatusOK, map[string]any{"valid": false, "reason": "invalid"})
-			}
 		}
 
 		// room preview
@@ -224,13 +126,6 @@ func Invites(se *core.ServeEvent) {
 			if inv.Get("used_at") != nil && inv.GetDateTime("used_at").Unix() > 0 {
 				resp = map[string]any{"message": "Invite already used"}
 				return apis.NewBadRequestError("used", nil)
-			}
-
-			// targeted check
-			targetEmail := strings.ToLower(inv.GetString("target_email"))
-			if targetEmail != "" && strings.ToLower(e.Auth.Email()) != targetEmail {
-				resp = map[string]any{"message": "Invite not valid for this account"}
-				return apis.NewBadRequestError("invalid target", nil)
 			}
 
 			// add membership
