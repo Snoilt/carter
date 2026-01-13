@@ -46,7 +46,11 @@ async function copyToClipboard(text?: string | null) {
 </script>
 
 <template>
-	<UModal v-model:open="open" title="Invite to Room">
+	<UModal
+		v-model:open="open"
+		aria-describedby="invite-to-room-modal"
+		title="Invite to Room"
+	>
 		<template #body>
 			<div class="space-y-6">
 				<div>
