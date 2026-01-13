@@ -10,4 +10,7 @@ export default defineNuxtConfig({
 		fallback: "light",
 		classSuffix: "",
 	},
+	fonts: {
+		families: [{ name: "JetBrains Mono", provider: "google", weights: ["400", "700"] }],
+	},
 })
