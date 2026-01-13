@@ -24,6 +24,10 @@ docker compose up -d
 - Service available at http://localhost:8080
 - Data persists in `./pb_data`
 
+**Disclaimer:**
+When the image is built for the first time it will a show a link to create a superuser in the Database.
+You will need to do that for the Database to work accordingly
+
 Optional: build and run the image locally
 ```bash
 docker build -t carter:local .
