@@ -32,6 +32,7 @@ func main() {
 		routes.Review(se)
 		routes.Next(se)
 		routes.Room(se)
+		routes.Invites(se)
 
 		se.Router.GET("/{path...}", apis.Static(os.DirFS("pb_public"), true))
 
