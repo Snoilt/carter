@@ -12,7 +12,6 @@ const open = defineModel<boolean>("open")
 const user = new User()
 const collectionTitle = ref("")
 const collectionDescription = ref("")
-const emailList = ref<string[]>([])
 
 //----------------------------------------------------------------------------
 
@@ -49,7 +48,6 @@ const createCollection = async (close: () => void) => {
 				name: collectionTitle.value,
 				description: collectionDescription.value,
 			})
-
 			useToast().add({
 				title: "Room created successfully",
 				color: "success",
@@ -62,7 +60,6 @@ const createCollection = async (close: () => void) => {
 	emit("collectionsUpdated")
 	collectionTitle.value = ""
 	collectionDescription.value = ""
-	emailList.value = []
 }
 </script>
 
@@ -86,14 +83,6 @@ const createCollection = async (close: () => void) => {
 					<UInput
 						v-model="collectionDescription"
 						placeholder="My Biology Collection"
-						size="xl"
-						class="w-full"
-					/>
-				</UFormField>
-				<UFormField name="emails" label="Share with Others">
-					<UInputTags
-						v-model="emailList"
-						placeholder="Press enter to add E-Mails"
 						size="xl"
 						class="w-full"
 					/>
