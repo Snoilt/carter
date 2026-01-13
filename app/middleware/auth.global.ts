@@ -3,12 +3,19 @@ export default defineNuxtRouteMiddleware((to) => {
 
 	const publicExact = new Set(["/", "/impressum", "/datenschutz"])
 
-	const publicPrefixes = ["/auth/login", "/auth/register"]
+	// Auth-only pages (redirect logged-in users away from these)
+	const authPrefixes = ["/auth/login", "/auth/register"]
+	// Other public pages that should remain accessible even when logged-in
+	const publicPrefixes = ["/invite/"]
 
+	const isAuthPage = authPrefixes.some((p) => to.path.startsWith(p))
 	const isPublic =
-		publicExact.has(to.path) || publicPrefixes.some((p) => to.path.startsWith(p))
+		publicExact.has(to.path) ||
+		isAuthPage ||
+		publicPrefixes.some((p) => to.path.startsWith(p))
 
-	if (isLoggedIn && isPublic) {
+	// Only redirect logged-in users away from auth pages or home, not from /invite
+	if (isLoggedIn && (isAuthPage || to.path === "/")) {
 		return navigateTo("/dashboard")
 	}
 

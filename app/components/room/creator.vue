@@ -42,14 +42,31 @@ const createCollection = async (close: () => void) => {
 		}
 	} else {
 		try {
-			await pb.collection("rooms").create({
+			const created = await pb.collection("rooms").create({
 				id: "",
 				user: [user.id],
 				creator: user.id,
 				name: collectionTitle.value,
 				description: collectionDescription.value,
 			})
-
+			if (emailList.value.length > 0 && created?.id) {
+				try {
+					await pb.send(`/api/room/${created.id}/invites/by-email`, {
+						method: "POST",
+						body: { emails: emailList.value },
+					})
+					useToast().add({
+						title: `Invites sent to ${emailList.value.length} email(s)`,
+						color: "success",
+					})
+				} catch (error) {
+					console.error("Error creating invites:", error)
+					useToast().add({
+						title: "Could not create email invites",
+						color: "error",
+					})
+				}
+			}
 			useToast().add({
 				title: "Room created successfully",
 				color: "success",
@@ -90,7 +107,7 @@ const createCollection = async (close: () => void) => {
 						class="w-full"
 					/>
 				</UFormField>
-				<UFormField name="emails" label="Share with Others">
+				<UFormField v-if="!props.room" name="emails" label="Share with Others">
 					<UInputTags
 						v-model="emailList"
 						placeholder="Press enter to add E-Mails"
