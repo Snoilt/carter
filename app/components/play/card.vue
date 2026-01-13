@@ -21,7 +21,7 @@ const props = defineProps<{
 			"
 		>
 			<h3 class="text-lg font-semibold text-gray-500 mb-2">Answer</h3>
-			<div class="text-xl">
+			<div class="text-lg">
 				<MDC :value="props.card?.solution || ''" />
 			</div>
 		</div>
