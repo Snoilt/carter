@@ -11,6 +11,7 @@ const props = defineProps<{
 }>()
 
 const isModalOpen = ref(false)
+const isShareOpen = ref(false)
 
 const items = computed(() => {
 	const baseItems = [
@@ -22,7 +23,14 @@ const items = computed(() => {
 				isModalOpen.value = true
 			},
 		},
-		{ label: "Share", icon: "lucide:share-2", show: true },
+		{
+			label: "Share",
+			icon: "lucide:share-2",
+			show: user.getRole(props.room) >= 1,
+			onSelect: () => {
+				isShareOpen.value = true
+			},
+		},
 		{
 			label: "Remove",
 			icon: "lucide:trash",
@@ -44,6 +52,7 @@ const items = computed(() => {
 		:room="room"
 		@collections-updated="emit('action')"
 	/>
+	<RoomShareModal v-model:open="isShareOpen" :room="room" />
 	<UDropdownMenu :ui="{ content: 'w-40' }" :items="items">
 		<UButton variant="ghost" size="sm" icon="lucide:more-horizontal" />
 	</UDropdownMenu>
