@@ -71,8 +71,6 @@ async function copyToClipboard(text?: string | null) {
 						{{ origin + inviteLink }}
 					</p>
 				</div>
-
-				<!-- email-based invites removed -->
 			</div>
 		</template>
 		<template #footer>
