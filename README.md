@@ -1,75 +1,71 @@
-# Nuxt Minimal Starter
+## 
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Docker & Compose
 
-## Setup
+A Dockerfile is provided to build the Go service and statically generate the Nuxt app. You can run the service with Docker Compose.
 
-Make sure to install dependencies:
+Compose file (compose.yaml):
 
+```yaml
+name: carter
+services:
+  pocketbase:
+    image: ghcr.io/snoilt/carter:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./pb_data:/app/pb_data
+```
+
+Start with Compose (pulls the prebuilt image):
 ```bash
-# npm
-npm install
+docker compose up -d
+```
+- Service available at http://localhost:8080
+- Data persists in `./pb_data`
 
-# pnpm
-pnpm install
+Optional: build and run the image locally
+```bash
+docker build -t carter:local .
+docker run --rm -p 8080:8080 -v "$(pwd)/pb_data:/app/pb_data" carter:local
+```
 
-# yarn
-yarn install
+## Contribute
 
-# bun
+#### Prerequisites
+
+- Node.js 22+
+- Bun installed: https://bun.sh/ (macOS/Linux via `curl -fsSL https://bun.sh/install | bash` or Homebrew: `brew install oven-sh/bun/bun`)
+- Go 1.21+ 
+
+## Quick Start
+
+1) Install dependencies (frontend):
+```bash
 bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
+2) Start the Nuxt dev server (http://localhost:3000):
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
 bun run dev
 ```
 
-## Production
-
-Build the application for production:
-
+3) Start the database/backend (PocketBase Go service in dev mode):
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+cd database
+go run main.go serve --dev
 ```
 
-Locally preview production build:
+Notes:
+- Frontend and backend run separately. The Go backend embeds PocketBase and loads custom routes and migrations.
+- Dev mode is convenient for local work (auto‑migrate is enabled when running via `go run`).
+
+## Generate PocketBase Types
+
+For type‑safe frontend code you can generate PocketBase types locally. Ensure your PocketBase server is reachable (default http://localhost:8090), then run:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+bun run pb:local:typegen
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+The script prompts for admin email and password and writes the generated types to `app/types/pb.d.ts`.
