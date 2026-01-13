@@ -42,6 +42,7 @@ const goBack = () => {
 					label="Back"
 					@click="goBack"
 				/>
+				<span v-else class="text-xl font-semibold">Kardr</span>
 			</template>
 
 			<UNavigationMenu v-if="!isLoggedIn" :items="items" />
