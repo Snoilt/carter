@@ -27,7 +27,7 @@ const isLoggedIn = computed(() => {
 	}
 })
 
-async function loadPreview() {
+const loadPreview = async () => {
 	loading.value = true
 	error.value = undefined
 	try {
@@ -35,8 +35,6 @@ async function loadPreview() {
 			method: "GET",
 		})) as PreviewResponse
 		preview.value = response
-
-		// preview is public; we handle auth on accept
 	} catch {
 		error.value = "Failed to load invite."
 	} finally {
@@ -44,7 +42,7 @@ async function loadPreview() {
 	}
 }
 
-async function acceptInvite() {
+const acceptInvite = async () => {
 	if (accepting.value) return
 	accepting.value = true
 	error.value = undefined
@@ -64,8 +62,8 @@ async function acceptInvite() {
 			return router.replace(`/room/${response.roomId}`)
 		}
 		error.value = "Could not join the room."
-	} catch (error_: any) {
-		error.value = error_?.data?.message || error_?.message || "Invite is not valid."
+	} catch {
+		error.value = "Invite is not valid."
 	} finally {
 		accepting.value = false
 	}
@@ -93,7 +91,7 @@ onMounted(loadPreview)
 				</p>
 
 				<div class="flex gap-3">
-					<UButton :disabled="accepting" @click="acceptInvite">
+					<UButton :disabled="accepting" @click="acceptInvite()">
 						{{ accepting ? "Joining…" : "Accept Invite" }}
 					</UButton>
 					<NuxtLink to="/dashboard" class="px-4 py-2">Back to dashboard</NuxtLink>
@@ -110,5 +108,3 @@ onMounted(loadPreview)
 		</div>
 	</div>
 </template>
-
-<style scoped></style>

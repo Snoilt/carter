@@ -45,7 +45,6 @@ func Invites(se *core.ServeEvent) {
 		inv.Set("room", roomId)
 		inv.Set("created_by", e.Auth.Id)
 		inv.Set("expires_at", expiresAt)
-		// untargeted -> target_email left empty
 
 		if err := se.App.Save(inv); err != nil {
 			return e.JSON(http.StatusInternalServerError, map[string]any{"message": "Failed to create invite"})
@@ -60,9 +59,6 @@ func Invites(se *core.ServeEvent) {
 		})
 	}).Bind(apis.RequireAuth())
 
-	// removed by-email bulk endpoint (untargeted invites only)
-
-	// GET /api/invite/{token}
 	se.Router.GET("/api/invite/{token}", func(e *core.RequestEvent) error {
 		token := e.Request.PathValue("token")
 		if token == "" {
@@ -74,18 +70,15 @@ func Invites(se *core.ServeEvent) {
 			return e.JSON(http.StatusOK, map[string]any{"valid": false, "reason": "invalid"})
 		}
 
-		// check expiry
 		exp := inv.GetDateTime("expires_at")
 		if !exp.IsZero() && exp.Time().Before(time.Now()) {
 			return e.JSON(http.StatusOK, map[string]any{"valid": false, "reason": "expired"})
 		}
 
-		// ensure not used (if schema tracks used fields)
 		if inv.Get("used_at") != nil && inv.GetDateTime("used_at").Unix() > 0 {
 			return e.JSON(http.StatusOK, map[string]any{"valid": false, "reason": "used"})
 		}
 
-		// room preview
 		room, _ := se.App.FindRecordById("rooms", inv.GetString("room"))
 		preview := map[string]any{"id": inv.GetString("room")}
 		if room != nil {
@@ -99,7 +92,6 @@ func Invites(se *core.ServeEvent) {
 		})
 	})
 
-	// POST /api/invite/{token}/accept
 	se.Router.POST("/api/invite/{token}/accept", func(e *core.RequestEvent) error {
 		if e.Auth == nil || e.Auth.Id == "" {
 			return e.JSON(http.StatusUnauthorized, map[string]any{"message": "Unauthorized"})
@@ -163,10 +155,7 @@ func Invites(se *core.ServeEvent) {
 
 	// Add cron cleanup for expired unused invites (best-effort)
 	se.App.Cron().Add("cleanup_room_invites", "@every 1h", func() {
-		// Delete invites where expires_at < now and used_at IS NULL
-		// Execute directly with a small safety window
 		now := time.Now()
-		// try to run in a transaction to avoid partial cleanup errors
 		_ = se.App.RunInTransaction(func(txApp core.App) error {
 			_, _ = txApp.NonconcurrentDB().
 				Delete("room_invites", dbx.NewExp("expires_at < {:now} AND (used_at IS NULL OR used_at = '')", dbx.Params{"now": now})).
@@ -208,4 +197,5 @@ func hasString(arr []string, v string) bool {
 		}
 	}
 	return false
+
 }
