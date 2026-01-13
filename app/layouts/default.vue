@@ -3,25 +3,27 @@ import type { NavigationMenuItem } from "@nuxt/ui"
 
 const route = useRoute()
 const router = useRouter()
-const items = computed<NavigationMenuItem[]>(() => [
-	{
-		label: "Login",
-		to: "/auth/login",
-		active: route.path.startsWith("/auth/login"),
-	},
-	{
-		label: "Register",
-		to: "/auth/register",
-		active: route.path.startsWith("/auth/register"),
-	},
-	{
-		label: "Log Out",
-		onClick: () => {
-			pb.authStore.clear()
-			navigateTo("/auth/login")
+
+const isLoggedIn = ref(pb.authStore.isValid)
+pb.authStore.onChange(() => {
+	isLoggedIn.value = pb.authStore.isValid
+})
+
+const items = computed<NavigationMenuItem[]>(() => {
+	if (isLoggedIn.value) return []
+	return [
+		{
+			label: "Login",
+			to: "/auth/login",
+			active: route.path.startsWith("/auth/login"),
 		},
-	},
-])
+		{
+			label: "Register",
+			to: "/auth/register",
+			active: route.path.startsWith("/auth/register"),
+		},
+	]
+})
 
 const goBack = () => {
 	router.back()
@@ -30,7 +32,7 @@ const goBack = () => {
 
 <template>
 	<div>
-		<UHeader mode="slideover">
+		<UHeader :toggle="!isLoggedIn" mode="slideover">
 			<template #title>
 				<UButton
 					v-if="route.path.startsWith('/room/')"
@@ -42,23 +44,21 @@ const goBack = () => {
 				/>
 			</template>
 
-			<UNavigationMenu :items="items" />
+			<UNavigationMenu v-if="!isLoggedIn" :items="items" />
 
 			<template #right>
 				<UColorModeButton />
 
-				<UButton
-					color="neutral"
-					variant="ghost"
-					to="https://github.com/Snoilt/carter"
-					target="_blank"
-					icon="i-simple-icons-github"
-					aria-label="GitHub"
-				/>
+				<UserDropdown v-if="isLoggedIn" />
 			</template>
 
 			<template #body>
-				<UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5" />
+				<UNavigationMenu
+					v-if="!isLoggedIn"
+					:items="items"
+					orientation="vertical"
+					class="-mx-2.5"
+				/>
 			</template>
 		</UHeader>
 
